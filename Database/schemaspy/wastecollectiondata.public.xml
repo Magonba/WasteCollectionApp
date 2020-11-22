@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="wastecollectiondata" schema="public" type="PostgreSQL - 12.4 (Ubuntu 12.4-0ubuntu0.20.04.1)">
+   <tables>
+      <table name="arcs" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="projectsourcenodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectarcid" foreignKey="fk_arc" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions_nodes_activatedarcs"/>
+            <parent column="projectid" foreignKey="fk_sourcenode" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="sourcenodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="sourcenodeid" foreignKey="fk_arc" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions_nodes_activatedarcs"/>
+            <parent column="nodeid" foreignKey="fk_sourcenode" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="projectdestinationnodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_destinationnode" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="destinationnodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="destinationnodeid" foreignKey="fk_arc" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions_nodes_activatedarcs"/>
+            <parent column="nodeid" foreignKey="fk_destinationnode" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="distance" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="projectsourcenodeid" sequenceNumberInPK="1"/>
+         <primaryKey column="sourcenodeid" sequenceNumberInPK="2"/>
+         <primaryKey column="destinationnodeid" sequenceNumberInPK="3"/>
+         <index name="arcs_pkey" unique="true">
+            <column ascending="true" name="projectsourcenodeid"/>
+            <column ascending="true" name="sourcenodeid"/>
+            <column ascending="true" name="destinationnodeid"/>
+         </index>
+         <checkConstraint constraint="((projectresultid = projectvehicletypeid))" name="sameproject"/>
+      </table>
+      <table name="collectionpointscenarios" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <child column="title" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectid" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions"/>
+            <parent column="id" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="projects"/>
+         </column>
+         <primaryKey column="title" sequenceNumberInPK="1"/>
+         <primaryKey column="projectid" sequenceNumberInPK="2"/>
+         <index name="collectionpointscenarios_pkey" unique="true">
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="projectid"/>
+         </index>
+      </table>
+      <table name="collectionpointscenarioversions" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <child column="title" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions_nodes_potcp"/>
+            <child column="titlecpsc" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+            <parent column="title" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarios"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectcpscid" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions_nodes_potcp"/>
+            <child column="projectcpscid" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+            <parent column="projectid" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarios"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="2" name="timing" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <child column="timing" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions_nodes_potcp"/>
+            <child column="timingcpsc" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+         </column>
+         <primaryKey column="title" sequenceNumberInPK="1"/>
+         <primaryKey column="projectid" sequenceNumberInPK="2"/>
+         <primaryKey column="timing" sequenceNumberInPK="3"/>
+         <index name="collectionpointscenarioversions_pkey" unique="true">
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="projectid"/>
+            <column ascending="true" name="timing"/>
+         </index>
+      </table>
+      <table name="collectionpointscenarioversions_nodes_potcp" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="nodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="nodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectnodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <parent column="title" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="projectcpscid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="timing" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="timing" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="potentialcollectionpoint" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="nodeid" sequenceNumberInPK="1"/>
+         <primaryKey column="projectnodeid" sequenceNumberInPK="2"/>
+         <primaryKey column="title" sequenceNumberInPK="3"/>
+         <primaryKey column="timing" sequenceNumberInPK="4"/>
+         <index name="collectionpointscenarioversions_nodes_potcp_pkey" unique="true">
+            <column ascending="true" name="nodeid"/>
+            <column ascending="true" name="projectnodeid"/>
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="timing"/>
+         </index>
+         <checkConstraint constraint="((projectresultid = projectvehicletypeid))" name="sameproject"/>
+      </table>
+      <table name="garbagescenarios" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <child column="title" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectid" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions"/>
+            <parent column="id" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="projects"/>
+         </column>
+         <primaryKey column="title" sequenceNumberInPK="1"/>
+         <primaryKey column="projectid" sequenceNumberInPK="2"/>
+         <index name="garbagescenarios_pkey" unique="true">
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="projectid"/>
+         </index>
+      </table>
+      <table name="garbagescenarioversions" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <child column="title" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions_nodes_waste"/>
+            <child column="titlegarbsc" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+            <parent column="title" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarios"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectgarbscid" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions_nodes_waste"/>
+            <child column="projectgarbscid" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+            <parent column="projectid" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarios"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="2" name="timing" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <child column="timing" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions_nodes_waste"/>
+            <child column="timinggarbsc" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+         </column>
+         <primaryKey column="title" sequenceNumberInPK="1"/>
+         <primaryKey column="projectid" sequenceNumberInPK="2"/>
+         <primaryKey column="timing" sequenceNumberInPK="3"/>
+         <index name="garbagescenarioversions_pkey" unique="true">
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="projectid"/>
+            <column ascending="true" name="timing"/>
+         </index>
+      </table>
+      <table name="garbagescenarioversions_nodes_waste" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="nodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="nodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectnodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <parent column="title" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="projectgarbscid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="timing" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="timing" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="wasteamount" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="nodeid" sequenceNumberInPK="1"/>
+         <primaryKey column="projectnodeid" sequenceNumberInPK="2"/>
+         <primaryKey column="title" sequenceNumberInPK="3"/>
+         <primaryKey column="timing" sequenceNumberInPK="4"/>
+         <index name="garbagescenarioversions_nodes_waste_pkey" unique="true">
+            <column ascending="true" name="nodeid"/>
+            <column ascending="true" name="projectnodeid"/>
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="timing"/>
+         </index>
+         <checkConstraint constraint="((projectresultid = projectvehicletypeid))" name="sameproject"/>
+      </table>
+      <table name="nodes" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="nodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="destinationnodeid" foreignKey="fk_destinationnode" implied="false" onDeleteCascade="false" schema="public" table="arcs"/>
+            <child column="sourcenodeid" foreignKey="fk_sourcenode" implied="false" onDeleteCascade="false" schema="public" table="arcs"/>
+            <child column="nodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions_nodes_potcp"/>
+            <child column="nodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions_nodes_waste"/>
+            <child column="nodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="tour_nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectdestinationnodeid" foreignKey="fk_destinationnode" implied="false" onDeleteCascade="false" schema="public" table="arcs"/>
+            <child column="projectsourcenodeid" foreignKey="fk_sourcenode" implied="false" onDeleteCascade="false" schema="public" table="arcs"/>
+            <child column="projectnodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions_nodes_potcp"/>
+            <child column="projectnodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions_nodes_waste"/>
+            <child column="projectnodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="tour_nodes"/>
+            <parent column="id" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="projects"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="xcoordinate" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="ycoordinate" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="vehicledepot" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="wastedepot" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="nodeid" sequenceNumberInPK="1"/>
+         <primaryKey column="projectid" sequenceNumberInPK="2"/>
+         <index name="nodes_pkey" unique="true">
+            <column ascending="true" name="nodeid"/>
+            <column ascending="true" name="projectid"/>
+         </index>
+      </table>
+      <table name="projects" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectid" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarios"/>
+            <child column="projectid" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarios"/>
+            <child column="projectid" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+            <child column="projectid" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="userprojects"/>
+            <child column="projectid" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="vehicletypes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectname" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="projects_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="results" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="timing" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <child column="timingresult" foreignKey="fk_result" implied="false" onDeleteCascade="false" schema="public" table="resultsvehicles"/>
+            <child column="timingresult" foreignKey="fk_result" implied="false" onDeleteCascade="false" schema="public" table="tours"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="titlegarbsc" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <parent column="title" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="projectgarbscid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectresultid" foreignKey="fk_result" implied="false" onDeleteCascade="false" schema="public" table="resultsvehicles"/>
+            <child column="projectresultid" foreignKey="fk_result" implied="false" onDeleteCascade="false" schema="public" table="tours"/>
+            <parent column="projectid" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="3" name="timinggarbsc" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="timing" foreignKey="fk_garbagescenario" implied="false" onDeleteCascade="false" schema="public" table="garbagescenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="titlecpsc" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <parent column="title" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="projectcpscid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="6" name="timingcpsc" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="timing" foreignKey="fk_collectionpointscenario" implied="false" onDeleteCascade="false" schema="public" table="collectionpointscenarioversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="model" nullable="false" remarks="" size="3" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="maxwalkingdistance" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="totaltime" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="timing" sequenceNumberInPK="1"/>
+         <primaryKey column="projectgarbscid" sequenceNumberInPK="2"/>
+         <index name="results_pkey" unique="true">
+            <column ascending="true" name="timing"/>
+            <column ascending="true" name="projectgarbscid"/>
+         </index>
+         <checkConstraint constraint="((projectresultid = projectvehicletypeid))" name="sameproject"/>
+      </table>
+      <table name="resultsvehicles" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="6" id="0" name="timingresult" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="timing" foreignKey="fk_result" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectresultid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectgarbscid" foreignKey="fk_result" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="titlevehicletype" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <parent column="title" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="projectvehicletypeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="4" name="timingvehicletype" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="timing" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions"/>
+         </column>
+         <primaryKey column="timingresult" sequenceNumberInPK="1"/>
+         <primaryKey column="projectresultid" sequenceNumberInPK="2"/>
+         <primaryKey column="titlevehicletype" sequenceNumberInPK="3"/>
+         <primaryKey column="timingvehicletype" sequenceNumberInPK="4"/>
+         <index name="resultsvehicles_pkey" unique="true">
+            <column ascending="true" name="timingresult"/>
+            <column ascending="true" name="projectresultid"/>
+            <column ascending="true" name="titlevehicletype"/>
+            <column ascending="true" name="timingvehicletype"/>
+         </index>
+         <checkConstraint constraint="((projectresultid = projectvehicletypeid))" name="sameproject"/>
+      </table>
+      <table name="tour_nodes" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="nodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="nodeid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectnodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_node" implied="false" onDeleteCascade="false" schema="public" table="nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="tourid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="fk_tour" implied="false" onDeleteCascade="false" schema="public" table="tours"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="projecttourid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectresultid" foreignKey="fk_tour" implied="false" onDeleteCascade="false" schema="public" table="tours"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="wastecollected" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="ordering" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="nodeid" sequenceNumberInPK="1"/>
+         <primaryKey column="projectnodeid" sequenceNumberInPK="2"/>
+         <primaryKey column="tourid" sequenceNumberInPK="3"/>
+         <index name="tour_nodes_pkey" unique="true">
+            <column ascending="true" name="nodeid"/>
+            <column ascending="true" name="projectnodeid"/>
+            <column ascending="true" name="tourid"/>
+         </index>
+         <checkConstraint constraint="((projectresultid = projectvehicletypeid))" name="sameproject"/>
+      </table>
+      <table name="tours" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="tourid" foreignKey="fk_tour" implied="false" onDeleteCascade="false" schema="public" table="tour_nodes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="timingresult" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="timing" foreignKey="fk_result" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="projectresultid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projecttourid" foreignKey="fk_tour" implied="false" onDeleteCascade="false" schema="public" table="tour_nodes"/>
+            <parent column="projectgarbscid" foreignKey="fk_result" implied="false" onDeleteCascade="false" schema="public" table="results"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="tourtime" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="tourwaste" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <primaryKey column="projectresultid" sequenceNumberInPK="2"/>
+         <index name="tours_pkey" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="projectresultid"/>
+         </index>
+      </table>
+      <table name="userprojects" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="userid" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <parent column="email" foreignKey="fk_user" implied="false" onDeleteCascade="false" schema="public" table="users"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="projects"/>
+         </column>
+         <primaryKey column="userid" sequenceNumberInPK="1"/>
+         <primaryKey column="projectid" sequenceNumberInPK="2"/>
+         <index name="userprojects_pkey" unique="true">
+            <column ascending="true" name="userid"/>
+            <column ascending="true" name="projectid"/>
+         </index>
+      </table>
+      <table name="users" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="email" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <child column="userid" foreignKey="fk_user" implied="false" onDeleteCascade="false" schema="public" table="userprojects"/>
+         </column>
+         <primaryKey column="email" sequenceNumberInPK="1"/>
+         <index name="users_pkey" unique="true">
+            <column ascending="true" name="email"/>
+         </index>
+      </table>
+      <table name="vehicletypes" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <child column="title" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectid" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions"/>
+            <parent column="id" foreignKey="fk_project" implied="false" onDeleteCascade="false" schema="public" table="projects"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="averagespeed" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="averagestoptime" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="vehiclecapacity" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="title" sequenceNumberInPK="1"/>
+         <primaryKey column="projectid" sequenceNumberInPK="2"/>
+         <index name="vehicletypes_pkey" unique="true">
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="projectid"/>
+         </index>
+      </table>
+      <table name="vehicletypeversions" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <child column="titlevehicletype" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="resultsvehicles"/>
+            <child column="title" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions_nodes_activatedarcs"/>
+            <parent column="title" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="projectid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <child column="projectvehicletypeid" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="resultsvehicles"/>
+            <child column="projectvehicletypeid" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions_nodes_activatedarcs"/>
+            <parent column="projectid" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypes"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="2" name="timing" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <child column="timingvehicletype" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="resultsvehicles"/>
+            <child column="timing" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions_nodes_activatedarcs"/>
+         </column>
+         <primaryKey column="title" sequenceNumberInPK="1"/>
+         <primaryKey column="projectid" sequenceNumberInPK="2"/>
+         <primaryKey column="timing" sequenceNumberInPK="3"/>
+         <index name="vehicletypeversions_pkey" unique="true">
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="projectid"/>
+            <column ascending="true" name="timing"/>
+         </index>
+      </table>
+      <table name="vehicletypeversions_nodes_activatedarcs" numRows="0" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="projectarcid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectsourcenodeid" foreignKey="fk_arc" implied="false" onDeleteCascade="false" schema="public" table="arcs"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="sourcenodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="sourcenodeid" foreignKey="fk_arc" implied="false" onDeleteCascade="false" schema="public" table="arcs"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="destinationnodeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="destinationnodeid" foreignKey="fk_arc" implied="false" onDeleteCascade="false" schema="public" table="arcs"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="title" nullable="false" remarks="" size="255" type="varchar" typeCode="12">
+            <parent column="title" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="projectvehicletypeid" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="projectid" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="5" name="timing" nullable="false" remarks="" size="29" type="timestamp" typeCode="93">
+            <parent column="timing" foreignKey="fk_vehicletype" implied="false" onDeleteCascade="false" schema="public" table="vehicletypeversions"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="activated" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="projectarcid" sequenceNumberInPK="1"/>
+         <primaryKey column="sourcenodeid" sequenceNumberInPK="2"/>
+         <primaryKey column="destinationnodeid" sequenceNumberInPK="3"/>
+         <primaryKey column="title" sequenceNumberInPK="4"/>
+         <primaryKey column="timing" sequenceNumberInPK="5"/>
+         <index name="vehicletypeversions_nodes_activatedarcs_pkey" unique="true">
+            <column ascending="true" name="projectarcid"/>
+            <column ascending="true" name="sourcenodeid"/>
+            <column ascending="true" name="destinationnodeid"/>
+            <column ascending="true" name="title"/>
+            <column ascending="true" name="timing"/>
+         </index>
+         <checkConstraint constraint="((projectresultid = projectvehicletypeid))" name="sameproject"/>
+      </table>
+   </tables>
+</database>

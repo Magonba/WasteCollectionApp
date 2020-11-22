@@ -1,0 +1,25 @@
+In order to start the Postgresql server type:
+-sudo service postgresql start (required after every restart of machine)
+-sudo -u postgres psql
+In order to create a schemaspy diagram type:
+-java -jar schemaspy-6.1.0.jar -t pgsql -db wastecollectiondata -host localhost:5432 -u wastecollectiondata -p wastecollectiondata -o ./schemaspy -dp postgresql-42.2.18.jar -s public -noads
+
+What was done?
+-Linux user "wastecollectiondata" with password "wastecollectiondata" was created
+-PostgreSQL user "wastecollectiondata" with password "wastecollectiondata" was created
+-PostgreSQL database "wastecollectiondata" was created
+-bash files (createDB.bash, deleteDB.bash) were updated and work as expected
+-accessPSQL.js works as expected
+-api.js works as expected
+-Database was created with "./createDB.bash"
+-For Database diagram see "./schemaspy/diagrams/summary/relationships.real.large.png"
+
+
+What to do next?
+-Learn to use git/GitHub
+-Upload to GitHub
+-Develop the whole process of a scenario (e.g. garbage estimation scenario), i.e. get data from database to web app, input data to web app, send data back to backend and then read/write to database
+    -Write a Story
+    -Organize files (also for future stories)
+    -Develop Story
+-Manage file paths (with env files)
