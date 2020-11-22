@@ -1,7 +1,6 @@
 \c wastecollectiondata;
 DROP TABLE IF EXISTS tour_nodes;
 DROP TABLE IF EXISTS tours;
-DROP TABLE IF EXISTS nodecollectionpointofscenario;
 DROP TABLE IF EXISTS resultsVehicles;
 DROP TABLE IF EXISTS results;
 DROP TABLE IF EXISTS vehicletypeversions_nodes_activatedarcs;
