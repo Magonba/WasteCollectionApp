@@ -5,12 +5,17 @@ const cors = require('@koa/cors');
 
 //const readCalculatedResults = require('./accessPSQL.js').readCalculatedResults;
 //const deleteResult = require('./accessPSQL.js').deleteResult;
+const readProjects = require('./accessPSQL.js').readProjects;
 
 const app = new Koa()
 
-router.get('/results/', listResults)
-      .del('/results/:id', clearResult)
-      .get('/timenow', getTime)
+router.get('/projects/', listProjects)
+
+async function listProjects(ctx){
+  myProjects = await readProjects();
+  ctx.body = myProjects;
+  console.log(ctx.body)
+}
 
 async function listResults(ctx) {
     /*console.log(ctx)
@@ -37,4 +42,4 @@ app
   .use(router.routes())
   .use(router.allowedMethods());
 
-app.listen(8040);
+app.listen(3000);

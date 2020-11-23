@@ -6,10 +6,36 @@ const client = new Client({
 })
 client.connect()
 
-client.query('SELECT NOW()', (err, res) => {
+const readProjects = async() => {
+    var projects = [];
+    await new Promise((resolve, reject) => {
+        client.query(`SELECT * FROM projects`, (err, res) => {
+            if(err){
+                console.log("error:");
+                console.log(err);
+                return;
+            }
+            if(res.rows.length == 0){
+                console.log("no content");
+                return;
+            }
+            console.log(res.rows)
+            for (var i = 0; i < res.rows.length;  i++) {
+                var result = {};
+                result.projectname = res.rows[i].projectname;
+  
+                projects.push(result);
+            }
+            resolve()
+        })
+    });
+    return projects;
+}
+
+/*client.query('SELECT NOW()', (err, res) => {
     console.log('client')
     console.log(err, res)
-})
+})*/
 
 /*const readCalculatedResults = async() => {
     var calculatedResults = [];
@@ -61,3 +87,4 @@ readCalculatedResults().then((res) => {
 module.exports.readCalculatedResults = readCalculatedResults;
 module.exports.deleteResult = deleteResult;
 */
+module.exports.readProjects = readProjects;

@@ -156,3 +156,5 @@ CREATE TABLE tour_nodes (
   CONSTRAINT fk_tour FOREIGN KEY(tourID, projectTourID) REFERENCES tours(ID, projectResultID) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(nodeID, projectnodeID, tourID)
 );
+INSERT INTO projects(projectName) VALUES('Fribourg');
+INSERT INTO projects(projectName) VALUES('Bern');
