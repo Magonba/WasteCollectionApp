@@ -3,37 +3,15 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 
-//const readCalculatedResults = require('./accessPSQL.js').readCalculatedResults;
-//const deleteResult = require('./accessPSQL.js').deleteResult;
-const readProjects = require('./accessPSQL.js').readProjects;
+const accessPSQL = require('./accessPSQL.js');
 
 const app = new Koa()
 
 router.get('/projects/', listProjects)
 
 async function listProjects(ctx){
-  myProjects = await readProjects();
+  myProjects = await accessPSQL.readProjects();
   ctx.body = myProjects;
-  console.log(ctx.body)
-}
-
-async function listResults(ctx) {
-    /*console.log(ctx)
-    myResults = await readCalculatedResults()
-    ctx.body = myResults
-    console.log(ctx.body)*/
-}
-
-async function clearResult(ctx) {
-  /*const id = ctx.params.id;
-  deleteResult(id);
-  ctx.status = 204;*/
-}
-
-async function getTime(ctx) {
-  /*const id = ctx.params.id;
-  deleteResult(id);
-  ctx.status = 204;*/
 }
 
 app
