@@ -1,15 +1,18 @@
 <template>
     <div>
-        Project: {{projectname}}
+        Project: {{project.projectname}}
+        <button type="button" class="btn">
+            Edit
+        </button>
     </div>
 </template>
 
 <script>
 export default {
     props: {
-        projectname: {
+        project: {
             required: true,
-            type: String
+            type: Object
         }
     }
 }

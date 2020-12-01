@@ -13,11 +13,11 @@ What was done?
 -api.js works as expected
 -Database was created with "./createDB.bash"
 -For Database diagram see "./schemaspy/diagrams/summary/relationships.real.large.png"
-
+-Project is on GitHub
+-Created conversionXmlJson.js
 
 What to do next?
--Learn to use git/GitHub
--Upload to GitHub
+-create function createNewProject (configure bash files)
 -Develop the whole process of a scenario (e.g. garbage estimation scenario), i.e. get data from database to web app, input data to web app, send data back to backend and then read/write to database
     -Write a Story
     -Organize files (also for future stories)

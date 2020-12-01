@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--ObjVal: 3798.286, ObjBound: 3798.286, MipGap: 0.0, RunTime: 404.486, NodeCount: 28962.0, RootRelaxTime: 0.09--><!--nbNodes: 117.0, maxWalk [m]: 100.0, nbCollPoints: 9.0, nbSplits: 0.0, totalWaste [t]: 0.629, totalTime [h]: 2.208, totalDistance [km]: 48.73, totalConsumption [l]: 19.874, totalEnergy [kWh wtw]: 255.77837999999997, totalCo2 [co2eq kg]: 59.82074, collTime [h]: 0.168, collDistance [km]: 0.636, collConsumption [l]: 0.636, collEnergy [kWh wtw]: 8.185319999999999, collCo2 [co2eq kg]: 1.9143599999999998, --><tours time="3798">
+  <tour time="1901" waste="312">
+    <node id="2" waste="0" x="77" y="80"/>
+    <node id="1" waste="0" x="335" y="48"/>
+    <node id="20" waste="17" x="354" y="0"/>
+    <node id="33" waste="7" x="290" y="43"/>
+    <node id="15" waste="5" x="192" y="114"/>
+    <node id="7" waste="159" x="114" y="163"/>
+    <node id="5" waste="124" x="77" y="180"/>
+    <node id="2" waste="0" x="77" y="80"/>
+  </tour>
+  <tour time="1898" waste="317">
+    <node id="2" waste="0" x="77" y="80"/>
+    <node id="23" waste="40" x="266" y="402"/>
+    <node id="25" waste="77" x="185" y="372"/>
+    <node id="96" waste="92" x="116" y="284"/>
+    <node id="27" waste="108" x="47" y="320"/>
+    <node id="2" waste="0" x="77" y="80"/>
+  </tour>
+</tours>

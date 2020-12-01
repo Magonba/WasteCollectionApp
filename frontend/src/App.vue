@@ -2,8 +2,8 @@
   <div id="app">
     <h1>Waste Collection App</h1>
     <ul>
-      <li v-for="item in Projects" :key="item.projectname">
-        <project :projectname="item.projectname">
+      <li v-for="item in Projects" :key="item.id">
+        <project :project="item">
         </project>
       </li>
     </ul>
@@ -27,6 +27,7 @@ export default {
   created: function() {
     axios.get("http://localhost:3000/projects/").then(res => {
         this.Projects = res.data;
+        console.log(this.Projects)
       })
   }
 }
