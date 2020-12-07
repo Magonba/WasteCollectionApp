@@ -1,4 +1,6 @@
 const fs = require('fs');
+const exec = require('child_process').exec;
+require('dotenv').config({path: '../.env'});
 
 async function createNewProject(setupSQLTemplateFile, deleteSQLTemplateFile, projectname){
     //2 steps: create setupProjectXXX.sql file and then deleteProjectXXX.sql file
@@ -54,4 +56,26 @@ async function createNewProject(setupSQLTemplateFile, deleteSQLTemplateFile, pro
     });
 }
 
-createNewProject('../Database/setupProject/setupProjectTemplate.sql', '../Database/deleteProject/deleteProjectTemplate.sql', 'Bern');
+async function setupDB(){
+    console.log('before test')
+    await new Promise((resolve, reject) => {
+        exec('./setupDB.bash',
+            function (error, stdout, stderr) {
+                if (stdout !== null){
+                    process.stdout.write('stdout: ' + stdout);
+                }
+                else if (stderr !== null){
+                    process.stderr.write('stderr' + stderr);
+                }
+                if (error !== null) {
+                    console.log('exec error: ' + error);
+                }
+                resolve();
+            });
+    });
+    console.log('after test');
+    console.log(process.env.SECRET_MESSAGE);
+}
+
+//createNewProject('../Database/setupProject/setupProjectTemplate.sql', '../Database/deleteProject/deleteProjectTemplate.sql', 'Bern');
+setupDB();
