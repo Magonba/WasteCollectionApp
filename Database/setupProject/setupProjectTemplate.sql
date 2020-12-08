@@ -1,6 +1,6 @@
 \c wastecollectiondata;
-CREATE SCHEMA REPLACEWITHPROJECTNAME;
-CREATE TABLE REPLACEWITHPROJECTNAME.nodes (
+CREATE SCHEMA IF NOT EXISTS REPLACEWITHPROJECTNAME;
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.nodes (
   nodeid INT NOT NULL,
   xcoordinate INT NOT NULL,
   ycoordinate INT NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE REPLACEWITHPROJECTNAME.nodes (
   wastedepot BOOLEAN NOT NULL,
   PRIMARY KEY(nodeid)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.arcs (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.arcs (
   sourcenodeid INT NOT NULL,
   destinationnodeid INT NOT NULL,
   distance INT NOT NULL,
@@ -16,17 +16,17 @@ CREATE TABLE REPLACEWITHPROJECTNAME.arcs (
   CONSTRAINT fk_destinationnode FOREIGN KEY(destinationnodeid) REFERENCES REPLACEWITHPROJECTNAME.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(sourcenodeid, destinationnodeid)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.garbagescenarios (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.garbagescenarios (
   title varchar(255) NOT NULL,
   PRIMARY KEY(title)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.garbagescenarioversions (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.garbagescenarioversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   CONSTRAINT fk_garbagescenario FOREIGN KEY(title) REFERENCES REPLACEWITHPROJECTNAME.garbagescenarios(title) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(title, timing)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.garbagescenarioversions_nodes_waste (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.garbagescenarioversions_nodes_waste (
   nodeid INT NOT NULL,
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
@@ -35,17 +35,17 @@ CREATE TABLE REPLACEWITHPROJECTNAME.garbagescenarioversions_nodes_waste (
   CONSTRAINT fk_garbagescenario FOREIGN KEY(title, timing) REFERENCES REPLACEWITHPROJECTNAME.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(nodeid, title, timing)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.collectionpointscenarios (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.collectionpointscenarios (
   title varchar(255) NOT NULL,
   PRIMARY KEY(title)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.collectionpointscenarioversions (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.collectionpointscenarioversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title) REFERENCES REPLACEWITHPROJECTNAME.collectionpointscenarios(title) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(title, timing)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.collectionpointscenarioversions_nodes_potcp (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.collectionpointscenarioversions_nodes_potcp (
   nodeid INT NOT NULL,
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
@@ -54,20 +54,20 @@ CREATE TABLE REPLACEWITHPROJECTNAME.collectionpointscenarioversions_nodes_potcp 
   CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title, timing) REFERENCES REPLACEWITHPROJECTNAME.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(nodeid, title, timing)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.vehicletypes (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.vehicletypes (
   title varchar(255) NOT NULL,
   averagespeed INT NOT NULL,
   averagestoptime INT NOT NULL,
   vehiclecapacity INT NOT NULL,
   PRIMARY KEY(title)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.vehicletypeversions (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.vehicletypeversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   CONSTRAINT fk_vehicletype FOREIGN KEY(title) REFERENCES REPLACEWITHPROJECTNAME.vehicletypes(title) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(title, timing)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.vehicletypeversions_nodes_activatedarcs (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.vehicletypeversions_nodes_activatedarcs (
   sourcenodeid INT NOT NULL,
   destinationnodeid INT NOT NULL,
   title varchar(255) NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE REPLACEWITHPROJECTNAME.vehicletypeversions_nodes_activatedarcs (
   CONSTRAINT fk_vehicletype FOREIGN KEY(title, timing) REFERENCES REPLACEWITHPROJECTNAME.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(sourcenodeid, destinationnodeid, title, timing)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.results (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.results (
   timing TIMESTAMP NOT NULL,
   titlegarbsc varchar(255) NOT NULL,
   timinggarbsc TIMESTAMP NOT NULL,
@@ -90,7 +90,7 @@ CREATE TABLE REPLACEWITHPROJECTNAME.results (
   CONSTRAINT fk_collectionpointscenario FOREIGN KEY(titlecpsc, timingcpsc) REFERENCES REPLACEWITHPROJECTNAME.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(timing)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.resultsvehicles (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.resultsvehicles (
   timingresult TIMESTAMP NOT NULL,
   titlevehicletype varchar(255) NOT NULL,
   timingvehicletype TIMESTAMP NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE REPLACEWITHPROJECTNAME.resultsvehicles (
   CONSTRAINT fk_vehicletype FOREIGN KEY(titlevehicletype, timingvehicletype) REFERENCES REPLACEWITHPROJECTNAME.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(timingresult, titlevehicletype, timingvehicletype)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.tours (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.tours (
   id INT GENERATED ALWAYS AS IDENTITY,
   timingresult TIMESTAMP NOT NULL,
   tourtime INT NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE REPLACEWITHPROJECTNAME.tours (
   CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES REPLACEWITHPROJECTNAME.results(timing) ON UPDATE CASCADE ON DELETE NO ACTION,
   PRIMARY KEY(id)
 );
-CREATE TABLE REPLACEWITHPROJECTNAME.tour_nodes (
+CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.tour_nodes (
   nodeid INT NOT NULL,
   tourid INT NOT NULL,
   wastecollected INT NOT NULL,
