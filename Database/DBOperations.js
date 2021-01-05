@@ -2,9 +2,8 @@
 const fs = require('fs');
 //Load package to execute bash files
 const exec = require('child_process').exec;
-//Load dotenv environment variables. Need to supply the file path to the .env file (change projectRoot variable if needed)
-const projectRoot = '/home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp';
-require('dotenv').config({path: `${projectRoot}/.env`});
+//Load dotenv environment variables. Need to supply the file path to the .env file
+require('dotenv').config({path: '../.env'});
 const env = process.env;
 
 async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateRelPath, projectname){
@@ -68,7 +67,7 @@ async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateR
 async function DBOperation(relSQLFilePath){
     absSQLFilePath = env.PROJECT_ROOT_PATH + relSQLFilePath;
     await new Promise((resolve, reject) => {
-        exec(`${env.PROJECT_ROOT_PATH}./Database/SQLQueryToDB.bash ${env.DB_NAME} ${env.DB_USER} ${env.DB_PASSWORD} ${env.DB_HOST} ${env.DB_PORT} ${absSQLFilePath}`,
+        exec(`${env.PROJECT_ROOT_PATH}/./Database/SQLQueryToDB.bash ${env.DB_NAME} ${env.DB_USER} ${env.DB_PASSWORD} ${env.DB_HOST} ${env.DB_PORT} ${absSQLFilePath}`,
             function (error, stdout, stderr) {
                 if (stdout !== null){
                     process.stdout.write('stdout: ' + stdout);

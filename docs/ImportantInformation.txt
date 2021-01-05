@@ -1,6 +1,7 @@
 In order to start the Postgresql server type:
 -sudo service postgresql start (required after every restart of machine)
 -sudo -u postgres psql
+
 In order to use postgresql terminal type:
 -list schemas: \dn
 -list users: \du
@@ -10,24 +11,29 @@ In order to use postgresql terminal type:
 In order to create a schemaspy diagram type:
 -java -jar schemaspy-6.1.0.jar -t pgsql -db wastecollectiondata -host localhost:5432 -u wastecollectiondata -p wastecollectiondata -o ./schemaspy -dp postgresql-42.2.18.jar -s public -noads
 
+Push things on GitHub
+
+
 What was done?
 -Linux user "wastecollectiondata" with password "wastecollectiondata" was created
 -PostgreSQL user "wastecollectiondata" with password "wastecollectiondata" was created
 -PostgreSQL database "wastecollectiondata" was created
--bash files (createDB.bash, deleteDB.bash) were updated and work as expected
+-bash files (setupDB.bash, deleteDB.bash) were updated and work as expected as well as setupProjectTemplate.sql and deleteProjectTemplate.sql
 -accessPSQL.js works as expected
 -api.js works as expected
--Database was created with "./createDB.bash"
--For Database diagram see "./schemaspy/diagrams/summary/relationships.real.large.png"
+-Database was created with "../Database/setupDB.bash"
+-For Database diagram see "../Database/schemaspy/diagrams/summary/relationships.real.large.png" (NOT UP TO DATE)
 -Project is on GitHub
 -Created conversionXmlJson.js
+-.env file
+-DBOperations.js File
 
 What to do next?
--create function createNewProject (configure bash files)
--Execute bash files from nodeJS
--handle passwords for psql => .env file
+-Bring database schema to OOP in Typescript
+-Take a look at eslint (what is it? what does it?). Finish configuration if necessary (see ./UsefulLinks.txt)
+-Add Database/DBOperations.js methods to Classes (and maybe other files too)
+-Recreate schemaspy
 -Develop the whole process of a scenario (e.g. garbage estimation scenario), i.e. get data from database to web app, input data to web app, send data back to backend and then read/write to database
     -Write a Story
     -Organize files (also for future stories)
     -Develop Story
--Manage file paths (with env files)
