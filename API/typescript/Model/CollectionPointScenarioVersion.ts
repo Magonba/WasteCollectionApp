@@ -9,4 +9,3 @@ export class CollectionPointScenarioVersion {
         this.nodesPotCP = nodesPotCP;
     }
 }
-console.log(new CollectionPointScenarioVersion("111", [[new MapNode(1, 1, 1, true, true), true]]));

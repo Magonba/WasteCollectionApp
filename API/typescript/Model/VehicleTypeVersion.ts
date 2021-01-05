@@ -16,4 +16,3 @@ export class VehicleTypeVersion {
         this.arcsActivated = arcsActivated;
     }
 }
-console.log(new VehicleTypeVersion("111", 1, 1, 1, [[new MapArc(new MapNode(1, 1, 1, true, true), new MapNode(2, 1, 1, true, true), 30), true]]));

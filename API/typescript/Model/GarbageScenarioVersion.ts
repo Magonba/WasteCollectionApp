@@ -9,4 +9,3 @@ export class GarbageScenarioVersion {
         this.nodesWaste = nodesWaste;
     }
 }
-console.log(new GarbageScenarioVersion("111", [[new MapNode(1, 1, 1, true, true), 100]]));
