@@ -3,7 +3,7 @@ const fs = require('fs');
 //Load package to execute bash files
 const exec = require('child_process').exec;
 //Load dotenv environment variables. Need to supply the file path to the .env file
-require('dotenv').config({path: '../.env'});
+require('dotenv').config({path: '../../.env'});
 const env = process.env;
 
 async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateRelPath, projectname){
@@ -67,7 +67,7 @@ async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateR
 async function DBOperation(relSQLFilePath){
     absSQLFilePath = env.PROJECT_ROOT_PATH + relSQLFilePath;
     await new Promise((resolve, reject) => {
-        exec(`${env.PROJECT_ROOT_PATH}/./Database/SQLQueryToDB.bash ${env.DB_NAME} ${env.DB_USER} ${env.DB_PASSWORD} ${env.DB_HOST} ${env.DB_PORT} ${absSQLFilePath}`,
+        exec(`${env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${env.DB_NAME} ${env.DB_USER} ${env.DB_PASSWORD} ${env.DB_HOST} ${env.DB_PORT} ${absSQLFilePath}`,
             function (error, stdout, stderr) {
                 if (stdout !== null){
                     process.stdout.write('stdout: ' + stdout);
@@ -84,26 +84,26 @@ async function DBOperation(relSQLFilePath){
 }
 
 async function initialSetupDB(){
-    await DBOperation('./Database/setupDB.sql');
+    await DBOperation('./backend/Database/setupDB.sql');
 }
 
 async function deleteInitialDB(){
-    await DBOperation('./Database/deleteDB.sql');
+    await DBOperation('./backend/Database/deleteDB.sql');
 }
 
 async function setupNewProjectDB(projectname){
-    await createProjectSQLFiles('./Database/setupProject/setupProjectTemplate.sql', './Database/deleteProject/deleteProjectTemplate.sql', projectname);
-    await DBOperation('./Database/setupProject/setupProject' + projectname + '.sql');
+    await createProjectSQLFiles('./backend/Database/setupProject/setupProjectTemplate.sql', './backend/Database/deleteProject/deleteProjectTemplate.sql', projectname);
+    await DBOperation('./backend/Database/setupProject/setupProject' + projectname + '.sql');
 }
 
 async function deleteProject(projectname){
-    await DBOperation('./Database/deleteProject/deleteProject' + projectname + '.sql');
+    await DBOperation('./backend/Database/deleteProject/deleteProject' + projectname + '.sql');
     //delete sql files of project
 }
 
-//createProjectSQLFiles('./Database/setupProject/setupProjectTemplate.sql', './Database/deleteProject/deleteProjectTemplate.sql', 'Bern');
-/*DBOperation('./Database/setupDB.sql').then(() => {
-    DBOperation('./Database/deleteDB.sql');
+//createProjectSQLFiles('./backend/Database/setupProject/setupProjectTemplate.sql', './backend/Database/deleteProject/deleteProjectTemplate.sql', 'Bern');
+/*DBOperation('./backend/Database/setupDB.sql').then(() => {
+    DBOperation('./backend/Database/deleteDB.sql');
 });*/
 //setupNewProjectDB('Fribourg');
 //deleteProject('Fribourg');
