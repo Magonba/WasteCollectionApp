@@ -6,4 +6,8 @@ export class Controller {
     constructor(){
         
     }
+
+    className(){
+        return "Controller";
+    }
 }

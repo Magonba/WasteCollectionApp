@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Tour = void 0;
 var Tour = /** @class */ (function () {
     function Tour(id, tourtime, tourwaste, tourNodes) {
         this.id = id;
