@@ -1,0 +1,19 @@
+Technologies used?
+-VueJS (frontend)
+-NodeJS (backend)
+-Typescript (backend, for static types)
+-PostgreSQL (Database)
+-Jest (backend, unit testing)
+-KoaJS (backend, API)
+
+Will probably include also the following technologies:
+-Selenium (for automated web app testing)
+
+Requirements Engineering (done):
+-MockUp on Figma
+
+Requirements Engineering (yet to do):
+-Class diagram
+-Use case diagram
+-BPMN diagram
+-DB diagram (use schemaspy)

@@ -29,10 +29,9 @@ What was done?
 -Created conversionXmlJson.js
 -.env file
 -DBOperations.js File
+-Model and Controller base is done
 
 What to do next?
--Bring database schema to OOP in Typescript
--Take a look at eslint (what is it? what does it?). Finish configuration if necessary (see ./UsefulLinks.txt)
 -Add Database/DBOperations.js methods to Classes (and maybe other files too)
 -Recreate schemaspy
 -Develop the whole process of a scenario (e.g. garbage estimation scenario), i.e. get data from database to web app, input data to web app, send data back to backend and then read/write to database
