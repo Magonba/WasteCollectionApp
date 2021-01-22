@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Result = void 0;
 var Result = /** @class */ (function () {
     function Result(timing, garbageScenarioVersion, collectionPointScenarioVersion, vehicleTypeVersions, model, maxWalkingDistance, totalTime, tours) {
         this.timing = timing;

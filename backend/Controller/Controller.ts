@@ -3,11 +3,11 @@ import {Model} from '../Model/Model';
 export class Controller {
     readonly model: Model = new Model();
 
-    constructor(){
+    /*constructor(){
         
-    }
+    }*/
 
-    className(){
+    className() : string {
         return "Controller";
     }
 }

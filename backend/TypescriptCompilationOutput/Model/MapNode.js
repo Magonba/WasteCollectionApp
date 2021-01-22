@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MapNode = void 0;
 var MapNode = /** @class */ (function () {
     function MapNode(id, xCoordinate, yCoordinate, vehicleDepot, wasteDepot) {
         this.id = id;

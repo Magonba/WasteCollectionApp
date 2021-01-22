@@ -5,7 +5,7 @@ export class Model {
     users: User[] = []; //change
     projects: Project[] = []; //change
 
-    constructor(){
+    /*constructor(){
         
-    }
+    }*/
 }

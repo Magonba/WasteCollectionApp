@@ -1,5 +1,5 @@
 import {MapArc} from './MapArc';
-import {MapNode} from './MapNode';
+//import {MapNode} from './MapNode';
 
 export class VehicleTypeVersion {
     timing: string; //maybe adapt (not string)

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CollectionPointScenario = void 0;
 var CollectionPointScenario = /** @class */ (function () {
     function CollectionPointScenario(title, collectionPointScenarioVersions) {
         this.title = title;

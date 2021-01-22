@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.VehicleTypeVersion = void 0;
+//import {MapNode} from './MapNode';
 var VehicleTypeVersion = /** @class */ (function () {
     function VehicleTypeVersion(timing, averageSpeed, averageStopTime, vehicleCapacity, arcsActivated) {
         this.timing = timing;

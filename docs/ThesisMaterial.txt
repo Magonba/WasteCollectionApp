@@ -17,3 +17,4 @@ Requirements Engineering (yet to do):
 -Use case diagram
 -BPMN diagram
 -DB diagram (use schemaspy)
+-API documentation with Swagger
