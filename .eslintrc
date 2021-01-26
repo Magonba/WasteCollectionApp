@@ -10,7 +10,8 @@
       "plugin:@typescript-eslint/recommended"
     ],
     "env": {
-      "commonjs": true
+      "commonjs": true,
+      "node": true
     },
     "rules": { 
       //"no-console": 2 // Remember, this means error!  
