@@ -1,5 +1,5 @@
 In order to start the Postgresql server type:
--sudo service postgresql start (required after every restart of machine)
+-sudo service postgresql start (required after every restart of machine) (in order to stop: sudo service postgresql stop)
 -sudo -u postgres psql
 
 In order to use postgresql terminal type:
