@@ -9,7 +9,6 @@ const env = process.env;
 async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateRelPath, projectname){
     //setup paths
     setupSQLTemplateAbsPath = env.PROJECT_ROOT_PATH + setupSQLTemplateRelPath;
-    deleteSQLTemplateAbsPath = env.PROJECT_ROOT_PATH + deleteSQLTemplateRelPath;
     //2 steps: create setupProjectXXX.sql file and then deleteProjectXXX.sql file
     //step 1:
     //save path to template file without filename for later use
@@ -38,6 +37,7 @@ async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateR
     });
     //step 2:
     //save path to template file without filename for later use
+    deleteSQLTemplateAbsPath = env.PROJECT_ROOT_PATH + deleteSQLTemplateRelPath;
     let dirOfDeleteSQLTemplate = deleteSQLTemplateAbsPath.split('/').slice(0, -1).join('/');
     //read sql-Template file
     let sqlFileDeleteProject = await new Promise((resolve, reject) => {
@@ -79,7 +79,8 @@ async function DBOperation(relSQLFilePath){
                     console.log('exec error: ' + error);
                 }
                 resolve();
-            });
+            }
+        );
     });
 }
 

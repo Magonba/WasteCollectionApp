@@ -2,7 +2,7 @@ import { DatabaseHandler } from "../Database/DatabaseHandler";
 import { Client } from "pg";
 import { exec } from "child_process";
 import dotenv from "dotenv";
-import * as fs from 'fs';
+import { deleteProject, deleteFile } from "./HelperFunctions.test";
 dotenv.config(); // necessary for accessing process.env variable
 let client: Client; // for psql db queries
 
@@ -98,10 +98,6 @@ describe("DatabaseHandler Setup Tests", () => {
     })
 });
 
-describe("DatabaseHandler creates Project Tests", () => {
-
-});
-
 describe("DatabaseHandler queries work", () => {
     //start DatabaseHandler
     test("Query function works", () => {
@@ -168,47 +164,7 @@ describe("Project creation works", () => {
             fail(new Error("Error querying the database"));
         });
 
-        //Delete Project now!!!
-        //save path to template file without filename for later use
-        let dirOfDeleteSQLTemplate = `${process.env.PROJECT_ROOT_PATH}/backend/Database/deleteProjectTemplate.sql`.split('/').slice(0, -1).join('/');
-        //read sql-Template file
-        let sqlFileDeleteProject = await new Promise<string>((resolve, reject) => {
-            fs.readFile(`${process.env.PROJECT_ROOT_PATH}/backend/Database/deleteProjectTemplate.sql`, 'utf8', function (err,sql) {
-                if (err) {
-                    console.log(err);
-                    reject();
-                }
-                resolve(sql);
-            });
-        });
-        //replace "REPLACEWITHPROJECTNAME" with projectname
-        sqlFileDeleteProject = sqlFileDeleteProject.split("REPLACEWITHPROJECTNAME").join("Fribourg");
-        //write deleteProjectXXX.sql File
-        await new Promise<void>((resolve, reject) => {
-            fs.writeFile(dirOfDeleteSQLTemplate + '/deleteProject' + "Fribourg" + '.sql', sqlFileDeleteProject, function(err) {
-                if(err) {
-                    reject();
-                } else{
-                    resolve();
-                }
-            });
-        });
-
-        const absSQLFilePath = process.env.PROJECT_ROOT_PATH + "../deleteProject/deleteProjectFribourg.sql";
-        await new Promise<void>((resolve, reject) => {
-            exec(`${process.env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASSWORD} ${process.env.DB_HOST} ${process.env.DB_PORT} ${absSQLFilePath}`,
-                function (error, stdout, stderr) {
-                    if (stdout !== null){
-                        process.stdout.write('stdout: ' + stdout);
-                    }
-                    else if (stderr !== null){
-                        process.stderr.write('stderr' + stderr);
-                    }
-                    if (error !== null) {
-                        console.log('exec error: ' + error);
-                    }
-                    resolve();
-                });
-        });
+        await deleteProject("./backend/Database/deleteProject/deleteProjectTemplate.sql", "Fribourg");
+        await deleteFile("./backend/Database/deleteProject/deleteProjectFribourg.sql");
     });
 });
