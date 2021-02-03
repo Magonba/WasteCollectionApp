@@ -1,4 +1,4 @@
-import {Model} from '../Model/Model';
+import { Model } from '../Model/Model';
 
 export class Controller {
     readonly model: Model = new Model();
@@ -7,7 +7,7 @@ export class Controller {
         
     }*/
 
-    className() : string {
-        return "Controller";
+    className(): string {
+        return 'Controller';
     }
 }

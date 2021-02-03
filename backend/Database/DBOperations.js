@@ -3,10 +3,10 @@ const fs = require('fs');
 //Load package to execute bash files
 const exec = require('child_process').exec;
 //Load dotenv environment variables. Need to supply the file path to the .env file
-require('dotenv').config({path: '../../.env'});
+require('dotenv').config({ path: '../../.env' });
 const env = process.env;
 
-async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateRelPath, projectname){
+async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateRelPath, projectname) {
     //setup paths
     setupSQLTemplateAbsPath = env.PROJECT_ROOT_PATH + setupSQLTemplateRelPath;
     //2 steps: create setupProjectXXX.sql file and then deleteProjectXXX.sql file
@@ -15,7 +15,7 @@ async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateR
     let dirOfSetupSQLTemplate = setupSQLTemplateAbsPath.split('/').slice(0, -1).join('/');
     //read sql-Template file
     let sqlFileCreateProject = await new Promise((resolve, reject) => {
-        fs.readFile(setupSQLTemplateAbsPath, 'utf8', function (err,sql) {
+        fs.readFile(setupSQLTemplateAbsPath, 'utf8', function (err, sql) {
             if (err) {
                 console.log(err);
                 reject();
@@ -24,16 +24,20 @@ async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateR
         });
     });
     //replace "REPLACEWITHPROJECTNAME" with projectname
-    sqlFileCreateProject = sqlFileCreateProject.split("REPLACEWITHPROJECTNAME").join(projectname);
+    sqlFileCreateProject = sqlFileCreateProject.split('REPLACEWITHPROJECTNAME').join(projectname);
     //write createProjectXXX.sql File
     await new Promise((resolve, reject) => {
-        fs.writeFile(dirOfSetupSQLTemplate + '/setupProject' + projectname + '.sql', sqlFileCreateProject, function(err) {
-            if(err) {
-                reject();
-            } else{
-                resolve();
-            }
-        }); 
+        fs.writeFile(
+            dirOfSetupSQLTemplate + '/setupProject' + projectname + '.sql',
+            sqlFileCreateProject,
+            function (err) {
+                if (err) {
+                    reject();
+                } else {
+                    resolve();
+                }
+            },
+        );
     });
     //step 2:
     //save path to template file without filename for later use
@@ -41,7 +45,7 @@ async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateR
     let dirOfDeleteSQLTemplate = deleteSQLTemplateAbsPath.split('/').slice(0, -1).join('/');
     //read sql-Template file
     let sqlFileDeleteProject = await new Promise((resolve, reject) => {
-        fs.readFile(deleteSQLTemplateAbsPath, 'utf8', function (err,sql) {
+        fs.readFile(deleteSQLTemplateAbsPath, 'utf8', function (err, sql) {
             if (err) {
                 console.log(err);
                 reject();
@@ -50,54 +54,62 @@ async function createProjectSQLFiles(setupSQLTemplateRelPath, deleteSQLTemplateR
         });
     });
     //replace "REPLACEWITHPROJECTNAME" with projectname
-    sqlFileDeleteProject = sqlFileDeleteProject.split("REPLACEWITHPROJECTNAME").join(projectname);
+    sqlFileDeleteProject = sqlFileDeleteProject.split('REPLACEWITHPROJECTNAME').join(projectname);
     //write deleteProjectXXX.sql File
     await new Promise((resolve, reject) => {
-        fs.writeFile(dirOfDeleteSQLTemplate + '/deleteProject' + projectname + '.sql', sqlFileDeleteProject, function(err) {
-            if(err) {
-                reject();
-            } else{
-                resolve();
-            }
-        }); 
+        fs.writeFile(
+            dirOfDeleteSQLTemplate + '/deleteProject' + projectname + '.sql',
+            sqlFileDeleteProject,
+            function (err) {
+                if (err) {
+                    reject();
+                } else {
+                    resolve();
+                }
+            },
+        );
     });
 }
 
 //Pass the relative path of the sql-file to be executed as string parameter
-async function DBOperation(relSQLFilePath){
+async function DBOperation(relSQLFilePath) {
     absSQLFilePath = env.PROJECT_ROOT_PATH + relSQLFilePath;
     await new Promise((resolve, reject) => {
-        exec(`${env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${env.DB_NAME} ${env.DB_USER} ${env.DB_PASSWORD} ${env.DB_HOST} ${env.DB_PORT} ${absSQLFilePath}`,
+        exec(
+            `${env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${env.DB_NAME} ${env.DB_USER} ${env.DB_PASSWORD} ${env.DB_HOST} ${env.DB_PORT} ${absSQLFilePath}`,
             function (error, stdout, stderr) {
-                if (stdout !== null){
+                if (stdout !== null) {
                     process.stdout.write('stdout: ' + stdout);
-                }
-                else if (stderr !== null){
+                } else if (stderr !== null) {
                     process.stderr.write('stderr' + stderr);
                 }
                 if (error !== null) {
                     console.log('exec error: ' + error);
                 }
                 resolve();
-            }
+            },
         );
     });
 }
 
-async function initialSetupDB(){
+async function initialSetupDB() {
     await DBOperation('./backend/Database/setupDB.sql');
 }
 
-async function deleteInitialDB(){
+async function deleteInitialDB() {
     await DBOperation('./backend/Database/deleteDB.sql');
 }
 
-async function setupNewProjectDB(projectname){
-    await createProjectSQLFiles('./backend/Database/setupProject/setupProjectTemplate.sql', './backend/Database/deleteProject/deleteProjectTemplate.sql', projectname);
+async function setupNewProjectDB(projectname) {
+    await createProjectSQLFiles(
+        './backend/Database/setupProject/setupProjectTemplate.sql',
+        './backend/Database/deleteProject/deleteProjectTemplate.sql',
+        projectname,
+    );
     await DBOperation('./backend/Database/setupProject/setupProject' + projectname + '.sql');
 }
 
-async function deleteProject(projectname){
+async function deleteProject(projectname) {
     await DBOperation('./backend/Database/deleteProject/deleteProject' + projectname + '.sql');
     //delete sql files of project
 }

@@ -5,19 +5,15 @@ const cors = require('@koa/cors');
 
 const accessPSQL = require('./accessPSQL.js');
 
-const app = new Koa()
+const app = new Koa();
 
-router.get('/projects/', listProjects)
+router.get('/projects/', listProjects);
 
-async function listProjects(ctx){
-  myProjects = await accessPSQL.readProjects();
-  ctx.body = myProjects;
+async function listProjects(ctx) {
+    myProjects = await accessPSQL.readProjects();
+    ctx.body = myProjects;
 }
 
-app
-  .use(bodyParser())
-  .use(cors())
-  .use(router.routes())
-  .use(router.allowedMethods());
+app.use(bodyParser()).use(cors()).use(router.routes()).use(router.allowedMethods());
 
 app.listen(3000);

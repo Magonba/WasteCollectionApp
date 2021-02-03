@@ -26,6 +26,10 @@ Use test-debug:
         For anyone using NEXT.js, this line was the problem for me: const nextApp = next({ dev: process.env.NODE_ENV !== 'production' });. I'm ripping it out tomorrow and migrating to serving an app directly from Express 😬
         Hope this helps someone else out there!
 
+ESLint, Prettier, Typescript Configuration info:
+    https://www.robertcooper.me/using-eslint-and-prettier-in-a-typescript-project
+    (possible extensions: automatic fixing when saving, no 'bad' commits)
+
 What was done?
 -Linux user "wastecollectiondata" with password "wastecollectiondata" was created
 -PostgreSQL user "wastecollectiondata" with password "wastecollectiondata" was created
