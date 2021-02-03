@@ -30,7 +30,8 @@
     "start": "tsc && node backend/TypescriptCompilationOutput/app.js",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "test": "jest"
+    "test": "jest",
+    "test-debug": "jest --runInBand --detectOpenHandles"
   },
   "keywords": [],
   "author": "",

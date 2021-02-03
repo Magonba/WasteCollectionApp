@@ -53,7 +53,7 @@ test("DatabaseHandler is a Class/Function", () => {
 describe("DatabaseHandler Setup Tests", () => {
     test("Starting DatabaseHandler sets the database with usersprojects schema up", async () => {
         //start DatabaseHandler
-        const dbHandler = new DatabaseHandler();
+        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
         
         //query the db for the new schema 'usersprojects'
         await new Promise<void>((resolve, reject) => {
@@ -71,16 +71,19 @@ describe("DatabaseHandler Setup Tests", () => {
             console.error(err);
             fail(new Error("Error querying the database"))
         });
+
+        //endClient for proper teardown
+        await dbHandler.endClient();
     });
 
     test("Starting DatabaseHandler sets the database with the tables users, projects and userprojects up (from schema usersprojects)", async () => {
         //start DatabaseHandler
-        const dbHandler = new DatabaseHandler();
+        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
         
         //query the db for the new tables
         await new Promise<void>((resolve, reject) => {
             client.query(`SELECT table_name FROM information_schema.tables 
-            WHERE table_schema = \'public\'`,
+            WHERE table_schema = \'usersprojects\'`,
             (err, res) => {
                 if(err){
                     reject(err);
@@ -95,26 +98,43 @@ describe("DatabaseHandler Setup Tests", () => {
             console.error(err);
             fail(new Error("Error querying the database"));
         });
+
+        //endClient for proper teardown
+        await dbHandler.endClient();
     })
 });
 
 describe("DatabaseHandler queries work", () => {
-    //start DatabaseHandler
-    test("Query function works", () => {
-        const dbHandler = new DatabaseHandler();
+    test("Query function works with select statement", async () => {
+        //start DatabaseHandler
+        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
 
-        expect(dbHandler.query(`SELECT schema_name FROM information_schema.schemata
+        expect(await dbHandler.querying(`SELECT schema_name FROM information_schema.schemata
         WHERE schema_name = \'usersprojects\'`)).toEqual([{ schema_name: 'usersprojects' }]);
+
+        //endClient for proper teardown
+        await dbHandler.endClient();
+    });
+
+    test("Query function works with insert statement", async () => {
+        //start DatabaseHandler
+        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
+
+        expect(await dbHandler.querying(`INSERT INTO usersprojects.projects (projectname)
+        VALUES (\'Fribourg2020\')`)).toEqual([]);
+
+        //endClient for proper teardown
+        await dbHandler.endClient();
     });
 });
 
-describe("Project creation works", () => {
+describe("Project creation/deletion works", () => {
     test("Create Project", async () => {
         //start DatabaseHandler
-        const dbHandler = new DatabaseHandler();
+        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
 
         //create project
-        dbHandler.createProject("Fribourg");
+        await dbHandler.setupProject("Fribourg");
 
         //query the db for the new schema 'fribourg'
         await new Promise<void>((resolve, reject) => {
@@ -166,5 +186,57 @@ describe("Project creation works", () => {
 
         await deleteProject("./backend/Database/deleteProject/deleteProjectTemplate.sql", "Fribourg");
         await deleteFile("./backend/Database/deleteProject/deleteProjectFribourg.sql");
+        await deleteFile("./backend/Database/setupProject/setupProjectFribourg.sql");
+
+        //endClient for proper teardown
+        await dbHandler.endClient();
+    });
+
+    test("Delete Project", async () => {
+        //start DatabaseHandler
+        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
+
+        //create project
+        await dbHandler.setupProject("Fribourg");
+
+        //delete project
+        await dbHandler.deleteProject("Fribourg");
+
+        //query the db for the schema 'fribourg' (which should not exist anymore)
+        await new Promise<void>((resolve, reject) => {
+            client.query(`SELECT schema_name FROM information_schema.schemata
+            WHERE schema_name = \'fribourg\'`,
+            (err, res) => {
+                if(err){
+                    reject(err);
+                } else {
+                    expect(res.rows).toEqual([]);
+                    resolve();
+                }
+            })
+        }).catch((err) => {
+            console.error(err);
+            fail(new Error("Error querying the database"))
+        });
+
+        //query the db for the tables (which should not exist anymore)
+        await new Promise<void>((resolve, reject) => {
+            client.query(`SELECT table_name FROM information_schema.tables 
+            WHERE table_schema = \'fribourg\'`,
+            (err, res) => {
+                if(err){
+                    reject(err);
+                } else {
+                    expect(res.rows).toEqual([]);
+                    resolve();
+                }
+            })
+        }).catch((err) => {
+            console.error(err);
+            fail(new Error("Error querying the database"));
+        });
+
+        //endClient for proper teardown
+        await dbHandler.endClient();
     });
 });

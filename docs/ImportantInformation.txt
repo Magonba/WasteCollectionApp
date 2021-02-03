@@ -16,6 +16,16 @@ git add .
 git commit -m "my message"
 git push origin master
 
+Use test-debug:
+    From https://github.com/facebook/jest/issues/9473:
+        For anyone still struggling with this, I managed to narrow down my issue by using a combination of suggestions above. Here's what I did:
+            1. Ran npx jest --runInBand --detectOpenHandles src/tests to validate that something was indeed hanging
+            2. Ran npx jest --runInBand --detectOpenHandles src/tests/someDir on several dirs to figure out which one was the culprit (if it doesn't hang and exits cleanly, move on to another dir)
+            3. Ran npx jest --runInBand --detectOpenHandles src/tests/someDir/someFile to figure out exactly which file was causing the problem
+            4. Commented out tests within the file to figure out exactly which test(s) were causing the problem
+        For anyone using NEXT.js, this line was the problem for me: const nextApp = next({ dev: process.env.NODE_ENV !== 'production' });. I'm ripping it out tomorrow and migrating to serving an app directly from Express 😬
+        Hope this helps someone else out there!
+
 What was done?
 -Linux user "wastecollectiondata" with password "wastecollectiondata" was created
 -PostgreSQL user "wastecollectiondata" with password "wastecollectiondata" was created

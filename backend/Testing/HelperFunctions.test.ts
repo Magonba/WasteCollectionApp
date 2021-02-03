@@ -1,6 +1,10 @@
+//This File has a .test.ts extension in order to be ignored by the compiler (otherwise would need to modify some config file)
+//Modify the corresponding config file at a later stage in the project
+
 import { exec } from "child_process";
 import dotenv from "dotenv";
 import * as fs from 'fs';
+import { Client } from "pg";
 dotenv.config(); // necessary for accessing process.env variable
 
 test("This is a Helper File", () => {
@@ -33,12 +37,12 @@ export async function deleteProject(deleteSQLTemplateRelPath: string, projectnam
             }
         }); 
     });
-    DBOperation(dirOfDeleteSQLTemplate + '/deleteProject' + projectname + '.sql');
+    await DBOperation(dirOfDeleteSQLTemplate + '/deleteProject' + projectname + '.sql');
 }
 
 //Pass the relative path of the sql-file to be executed as string parameter
 async function DBOperation(absSQLFilePath: string){
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve) => {
         exec(`${process.env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASSWORD} ${process.env.DB_HOST} ${process.env.DB_PORT} ${absSQLFilePath}`,
             function (error, stdout, stderr) {
                 if (stdout !== null){
@@ -68,10 +72,26 @@ export async function deleteFile(relfilepath : string) {
                     process.stderr.write('stderr' + stderr);
                 }
                 if (error !== null) {
-                    console.log('exec error: ' + error);
+                    console.error('exec error: ' + error);
                 }
                 resolve();
             }
         );
+    });
+}
+
+export async function querying(myQueryString : string, client : Client){
+    return await new Promise<any[]>((resolve, reject) => {
+        client.query(myQueryString,
+        (err, res) => {
+            if(err){
+                reject(err);
+            } else {
+                resolve(res.rows);
+            }
+        })
+    }).catch((err) => {
+        console.error(err);
+        fail(new Error("Error querying the database"))
     });
 }
