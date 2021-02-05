@@ -2,7 +2,7 @@ import { DatabaseHandler } from '../Database/DatabaseHandler';
 import { Client } from 'pg';
 import { exec } from 'child_process';
 import dotenv from 'dotenv';
-import { deleteProject, deleteFile } from './HelperFunctions.test';
+import * as HelperFunctions from './HelperFunctions.test';
 dotenv.config(); // necessary for accessing process.env variable
 let client: Client; // for psql db queries
 
@@ -19,9 +19,9 @@ beforeAll(async () => {
     await client.connect();
 });
 
-afterAll(() => {
+afterAll(async () => {
     //end pg client connection
-    client.end();
+    await client.end();
 });
 
 afterEach(async () => {
@@ -29,22 +29,27 @@ afterEach(async () => {
     await new Promise<void>((resolve, reject) => {
         exec(
             `${process.env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASSWORD} ${process.env.DB_HOST} ${process.env.DB_PORT} ${process.env.PROJECT_ROOT_PATH}/backend/Database/deleteDB.sql`,
-            (error, stdout, stderr) => {
-                if (stdout !== null) {
-                    process.stdout.write('stdout: ' + stdout);
-                } else if (stderr !== null) {
-                    process.stderr.write('stderr' + stderr);
+            (err: Error | null, stdout: string | null, stderr: string | null) => {
+                if (stdout !== null && stdout !== '') {
+                    //process.stdout.write('stdout: ' + stdout);
+                    //console.log("stdout is '" + stdout + "'");
                 }
-                if (error !== null) {
-                    reject(error);
+                if (stderr !== null && stderr !== '') {
+                    //process.stderr.write('stderr' + stderr);
+                    //console.error("stderr is '" + stderr + "'");
+                }
+                if (err !== null) {
+                    //console.error(err.stack);
+                    reject(err);
                 }
                 resolve();
             },
         );
-    }).catch((err) => {
-        console.error(err);
-        console.error('Issues deleting setup tables and schema!');
     });
+
+    //end pg Pool of DatabaseHandler (needed for proper teardown (in order to set dbSetUp to false))
+    const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
+    dbHandler.endPool();
 });
 
 test('DatabaseHandler is a Class/Function', () => {
@@ -55,160 +60,109 @@ test('DatabaseHandler is a Class/Function', () => {
 describe('DatabaseHandler Setup Tests', () => {
     test('Starting DatabaseHandler sets the database with usersprojects schema up', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
+        await DatabaseHandler.getDatabaseHandler(client);
 
         //query the db for the new schema 'usersprojects'
-        await new Promise<void>((resolve, reject) => {
-            client.query(
-                `SELECT schema_name FROM information_schema.schemata
+        const schemaResult = await HelperFunctions.querying(
+            `SELECT schema_name FROM information_schema.schemata
             WHERE schema_name = 'usersprojects'`,
-                (err, res) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        expect(res.rows).toContainEqual({ schema_name: 'usersprojects' });
-                        resolve();
-                    }
-                },
-            );
-        }).catch((err) => {
-            console.error(err);
-            fail(new Error('Error querying the database'));
-        });
-
-        //endClient for proper teardown
-        await dbHandler.endClient();
+            client,
+        );
+        expect(schemaResult).toContainEqual({ schema_name: 'usersprojects' });
     });
 
     test('Starting DatabaseHandler sets the database with the tables users, projects and userprojects up (from schema usersprojects)', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
+        await DatabaseHandler.getDatabaseHandler(client);
 
         //query the db for the new tables
-        await new Promise<void>((resolve, reject) => {
-            client.query(
-                `SELECT table_name FROM information_schema.tables 
-            WHERE table_schema = \'usersprojects\'`,
-                (err, res) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        expect(res.rows).toContainEqual({ table_name: 'users' });
-                        expect(res.rows).toContainEqual({ table_name: 'projects' });
-                        expect(res.rows).toContainEqual({ table_name: 'userprojects' });
-                        resolve();
-                    }
-                },
-            );
-        }).catch((err) => {
-            console.error(err);
-            fail(new Error('Error querying the database'));
-        });
-
-        //endClient for proper teardown
-        await dbHandler.endClient();
+        const tableResult = await HelperFunctions.querying(
+            `SELECT table_name FROM information_schema.tables 
+            WHERE table_schema = 'usersprojects'`,
+            client,
+        );
+        expect(tableResult).toContainEqual({ table_name: 'users' });
+        expect(tableResult).toContainEqual({ table_name: 'projects' });
+        expect(tableResult).toContainEqual({ table_name: 'userprojects' });
     });
 });
 
 describe('DatabaseHandler queries work', () => {
     test('Query function works with select statement', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
+        const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
 
         expect(
             await dbHandler.querying(`SELECT schema_name FROM information_schema.schemata
-        WHERE schema_name = \'usersprojects\'`),
+            WHERE schema_name = 'usersprojects'`),
         ).toEqual([{ schema_name: 'usersprojects' }]);
-
-        //endClient for proper teardown
-        await dbHandler.endClient();
     });
 
     test('Query function works with insert statement', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
+        const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
 
         expect(
             await dbHandler.querying(`INSERT INTO usersprojects.projects (projectname)
-        VALUES (\'Fribourg2020\')`),
+            VALUES ('Fribourg2020')`),
         ).toEqual([]);
 
-        //endClient for proper teardown
-        await dbHandler.endClient();
+        const projects = await HelperFunctions.querying(
+            `SELECT projectname FROM usersprojects.projects 
+            WHERE projectname = 'Fribourg2020'`,
+            client,
+        );
+
+        expect(projects).toEqual([{ projectname: 'Fribourg2020' }]);
     });
 });
 
 describe('Project creation/deletion works', () => {
     test('Create Project', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
+        const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
 
         //create project
         await dbHandler.setupProject('Fribourg');
 
         //query the db for the new schema 'fribourg'
-        await new Promise<void>((resolve, reject) => {
-            client.query(
-                `SELECT schema_name FROM information_schema.schemata
+        const schemaResult = await HelperFunctions.querying(
+            `SELECT schema_name FROM information_schema.schemata
             WHERE schema_name = 'fribourg'`,
-                (err, res) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        expect(res.rows).toContainEqual({ schema_name: 'fribourg' });
-                        resolve();
-                    }
-                },
-            );
-        }).catch((err) => {
-            console.error(err);
-            fail(new Error('Error querying the database'));
-        });
+            client,
+        );
+        expect(schemaResult).toContainEqual({ schema_name: 'fribourg' });
 
         //query the db for the new tables
-        await new Promise<void>((resolve, reject) => {
-            client.query(
-                `SELECT table_name FROM information_schema.tables 
+        const tableResult = await HelperFunctions.querying(
+            `SELECT table_name FROM information_schema.tables 
             WHERE table_schema = 'fribourg'`,
-                (err, res) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        expect(res.rows).toContainEqual({ table_name: 'nodes' });
-                        expect(res.rows).toContainEqual({ table_name: 'arcs' });
-                        expect(res.rows).toContainEqual({ table_name: 'garbagescenarios' });
-                        expect(res.rows).toContainEqual({ table_name: 'garbagescenarioversions' });
-                        expect(res.rows).toContainEqual({ table_name: 'garbagescenarioversions_nodes_waste' });
-                        expect(res.rows).toContainEqual({ table_name: 'collectionpointscenarios' });
-                        expect(res.rows).toContainEqual({ table_name: 'collectionpointscenarioversions' });
-                        expect(res.rows).toContainEqual({ table_name: 'collectionpointscenarioversions_nodes_potcp' });
-                        expect(res.rows).toContainEqual({ table_name: 'vehicletypes' });
-                        expect(res.rows).toContainEqual({ table_name: 'vehicletypeversions' });
-                        expect(res.rows).toContainEqual({ table_name: 'vehicletypeversions_nodes_activatedarcs' });
-                        expect(res.rows).toContainEqual({ table_name: 'results' });
-                        expect(res.rows).toContainEqual({ table_name: 'resultsvehicles' });
-                        expect(res.rows).toContainEqual({ table_name: 'tours' });
-                        expect(res.rows).toContainEqual({ table_name: 'tour_nodes' });
-                        resolve();
-                    }
-                },
-            );
-        }).catch((err) => {
-            console.error(err);
-            fail(new Error('Error querying the database'));
-        });
+            client,
+        );
+        expect(tableResult).toContainEqual({ table_name: 'nodes' });
+        expect(tableResult).toContainEqual({ table_name: 'arcs' });
+        expect(tableResult).toContainEqual({ table_name: 'garbagescenarios' });
+        expect(tableResult).toContainEqual({ table_name: 'garbagescenarioversions' });
+        expect(tableResult).toContainEqual({ table_name: 'garbagescenarioversions_nodes_waste' });
+        expect(tableResult).toContainEqual({ table_name: 'collectionpointscenarios' });
+        expect(tableResult).toContainEqual({ table_name: 'collectionpointscenarioversions' });
+        expect(tableResult).toContainEqual({ table_name: 'collectionpointscenarioversions_nodes_potcp' });
+        expect(tableResult).toContainEqual({ table_name: 'vehicletypes' });
+        expect(tableResult).toContainEqual({ table_name: 'vehicletypeversions' });
+        expect(tableResult).toContainEqual({ table_name: 'vehicletypeversions_nodes_activatedarcs' });
+        expect(tableResult).toContainEqual({ table_name: 'results' });
+        expect(tableResult).toContainEqual({ table_name: 'resultsvehicles' });
+        expect(tableResult).toContainEqual({ table_name: 'tours' });
+        expect(tableResult).toContainEqual({ table_name: 'tour_nodes' });
 
-        await deleteProject('./backend/Database/deleteProject/deleteProjectTemplate.sql', 'Fribourg');
-        await deleteFile('./backend/Database/deleteProject/deleteProjectFribourg.sql');
-        await deleteFile('./backend/Database/setupProject/setupProjectFribourg.sql');
-
-        //endClient for proper teardown
-        await dbHandler.endClient();
+        await HelperFunctions.deleteProject('./backend/Database/deleteProject/deleteProjectTemplate.sql', 'Fribourg');
+        await HelperFunctions.deleteFile('./backend/Database/deleteProject/deleteProjectFribourg.sql');
+        await HelperFunctions.deleteFile('./backend/Database/setupProject/setupProjectFribourg.sql');
     });
 
     test('Delete Project', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.setupDatabaseHandler();
+        const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
 
         //create project
         await dbHandler.setupProject('Fribourg');
@@ -217,44 +171,19 @@ describe('Project creation/deletion works', () => {
         await dbHandler.deleteProject('Fribourg');
 
         //query the db for the schema 'fribourg' (which should not exist anymore)
-        await new Promise<void>((resolve, reject) => {
-            client.query(
-                `SELECT schema_name FROM information_schema.schemata
+        const schemaResult = await HelperFunctions.querying(
+            `SELECT schema_name FROM information_schema.schemata
             WHERE schema_name = 'fribourg'`,
-                (err, res) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        expect(res.rows).toEqual([]);
-                        resolve();
-                    }
-                },
-            );
-        }).catch((err) => {
-            console.error(err);
-            fail(new Error('Error querying the database'));
-        });
+            client,
+        );
+        expect(schemaResult).toEqual([]);
 
         //query the db for the tables (which should not exist anymore)
-        await new Promise<void>((resolve, reject) => {
-            client.query(
-                `SELECT table_name FROM information_schema.tables 
+        const tableResult = await HelperFunctions.querying(
+            `SELECT table_name FROM information_schema.tables 
             WHERE table_schema = 'fribourg'`,
-                (err, res) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        expect(res.rows).toEqual([]);
-                        resolve();
-                    }
-                },
-            );
-        }).catch((err) => {
-            console.error(err);
-            fail(new Error('Error querying the database'));
-        });
-
-        //endClient for proper teardown
-        await dbHandler.endClient();
+            client,
+        );
+        expect(tableResult).toEqual([]);
     });
 });
