@@ -1,15 +1,18 @@
 import { DatabaseHandler } from '../Database/DatabaseHandler';
+import { Logger } from '../Logger/Logger';
 import { Client } from 'pg';
 import { exec } from 'child_process';
 import dotenv from 'dotenv';
 import * as HelperFunctions from './HelperFunctions.test';
 dotenv.config(); // necessary for accessing process.env variable
 let client: Client; // for psql db queries
+const logger = Logger.getLogger();
 
 beforeAll(async () => {
     //start PSQL server
-    console.log(
+    logger.fileAndConsoleLog(
         "You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error",
+        'info',
     );
 
     //setup pg client connection
@@ -22,6 +25,10 @@ beforeAll(async () => {
 afterAll(async () => {
     //end pg client connection
     await client.end();
+
+    //end Pool of DatabaseHandler (needed for proper teardown)
+    const dbHandler = await DatabaseHandler.getDatabaseHandler();
+    dbHandler.endPool();
 });
 
 afterEach(async () => {
@@ -31,25 +38,19 @@ afterEach(async () => {
             `${process.env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASSWORD} ${process.env.DB_HOST} ${process.env.DB_PORT} ${process.env.PROJECT_ROOT_PATH}/backend/Database/deleteDB.sql`,
             (err: Error | null, stdout: string | null, stderr: string | null) => {
                 if (stdout !== null && stdout !== '') {
-                    //process.stdout.write('stdout: ' + stdout);
-                    //console.log("stdout is '" + stdout + "'");
+                    Logger.getLogger().dbLog(stdout, 'silly');
                 }
                 if (stderr !== null && stderr !== '') {
-                    //process.stderr.write('stderr' + stderr);
-                    //console.error("stderr is '" + stderr + "'");
+                    Logger.getLogger().dbLog(stderr, 'warn');
                 }
                 if (err !== null) {
-                    //console.error(err.stack);
+                    logger.fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                     reject(err);
                 }
                 resolve();
             },
         );
     });
-
-    //end pg Pool of DatabaseHandler (needed for proper teardown (in order to set dbSetUp to false))
-    const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
-    dbHandler.endPool();
 });
 
 test('DatabaseHandler is a Class/Function', () => {
@@ -60,7 +61,7 @@ test('DatabaseHandler is a Class/Function', () => {
 describe('DatabaseHandler Setup Tests', () => {
     test('Starting DatabaseHandler sets the database with usersprojects schema up', async () => {
         //start DatabaseHandler
-        await DatabaseHandler.getDatabaseHandler(client);
+        await DatabaseHandler.getDatabaseHandler();
 
         //query the db for the new schema 'usersprojects'
         const schemaResult = await HelperFunctions.querying(
@@ -73,7 +74,7 @@ describe('DatabaseHandler Setup Tests', () => {
 
     test('Starting DatabaseHandler sets the database with the tables users, projects and userprojects up (from schema usersprojects)', async () => {
         //start DatabaseHandler
-        await DatabaseHandler.getDatabaseHandler(client);
+        await DatabaseHandler.getDatabaseHandler();
 
         //query the db for the new tables
         const tableResult = await HelperFunctions.querying(
@@ -90,7 +91,7 @@ describe('DatabaseHandler Setup Tests', () => {
 describe('DatabaseHandler queries work', () => {
     test('Query function works with select statement', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
+        const dbHandler = await DatabaseHandler.getDatabaseHandler();
 
         expect(
             await dbHandler.querying(`SELECT schema_name FROM information_schema.schemata
@@ -100,7 +101,7 @@ describe('DatabaseHandler queries work', () => {
 
     test('Query function works with insert statement', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
+        const dbHandler = await DatabaseHandler.getDatabaseHandler();
 
         expect(
             await dbHandler.querying(`INSERT INTO usersprojects.projects (projectname)
@@ -120,7 +121,7 @@ describe('DatabaseHandler queries work', () => {
 describe('Project creation/deletion works', () => {
     test('Create Project', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
+        const dbHandler = await DatabaseHandler.getDatabaseHandler();
 
         //create project
         await dbHandler.setupProject('Fribourg');
@@ -162,7 +163,7 @@ describe('Project creation/deletion works', () => {
 
     test('Delete Project', async () => {
         //start DatabaseHandler
-        const dbHandler = await DatabaseHandler.getDatabaseHandler(client);
+        const dbHandler = await DatabaseHandler.getDatabaseHandler();
 
         //create project
         await dbHandler.setupProject('Fribourg');

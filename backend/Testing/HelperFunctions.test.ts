@@ -2,12 +2,13 @@
 //Modify the corresponding config file at a later stage in the project
 
 import { exec } from 'child_process';
+import { Logger } from '../Logger/Logger';
 import dotenv from 'dotenv';
 import * as fs from 'fs';
 import { Client } from 'pg';
 dotenv.config(); // necessary for accessing process.env variable
 
-test.skip('This is a Helper File', () => {
+test('This is a Helper File. The result of this test suite will always be OK according to Jest.', async () => {
     expect(0).toBe(0);
 });
 
@@ -19,7 +20,7 @@ export async function deleteProject(deleteSQLTemplateRelPath: string, projectnam
     let sqlFileDeleteProject = await new Promise<string>((resolve, reject) => {
         fs.readFile(deleteSQLTemplateAbsPath, 'utf8', (err: Error | null, sql: string) => {
             if (err) {
-                console.error(err.stack);
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                 reject(err);
             }
             resolve(sql);
@@ -34,7 +35,7 @@ export async function deleteProject(deleteSQLTemplateRelPath: string, projectnam
             sqlFileDeleteProject,
             (err: Error | null) => {
                 if (err) {
-                    console.error(err.stack);
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                     reject(err);
                 } else {
                     resolve();
@@ -52,15 +53,13 @@ async function DBOperation(absSQLFilePath: string) {
             `${process.env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASSWORD} ${process.env.DB_HOST} ${process.env.DB_PORT} ${absSQLFilePath}`,
             (err: Error | null, stdout: string | null, stderr: string | null) => {
                 if (stdout !== null && stdout !== '') {
-                    //process.stdout.write('stdout: ' + stdout);
-                    //console.log("stdout is '" + stdout + "'");
+                    Logger.getLogger().dbLog(stdout, 'silly');
                 }
                 if (stderr !== null && stderr != '') {
-                    //process.stderr.write('stderr' + stderr);
-                    //console.error("stderr is '" + stderr + "'");
+                    Logger.getLogger().dbLog(stderr, 'warn');
                 }
                 if (err !== null) {
-                    //console.error('exec error: ' + err.stack);
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                     reject(err);
                 }
                 resolve();
@@ -74,15 +73,13 @@ export async function deleteFile(relfilepath: string): Promise<void> {
     await new Promise<void>((resolve, reject) => {
         exec(`rm ${absfilepath}`, (err: Error | null, stdout: string | null, stderr: string | null) => {
             if (stdout !== null && stdout !== '') {
-                //process.stdout.write('stdout: ' + stdout);
-                //console.log("stdout is '" + stdout + "'");
+                Logger.getLogger().dbLog(stdout, 'silly');
             }
             if (stderr !== null && stderr !== '') {
-                //process.stderr.write('stderr' + stderr);
-                //console.error("stderr is '" + stderr + "'");
+                Logger.getLogger().dbLog(stderr, 'warn');
             }
             if (err !== null) {
-                //console.error('exec error: ' + err.stack);
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                 reject(err);
             }
             resolve();
@@ -90,14 +87,42 @@ export async function deleteFile(relfilepath: string): Promise<void> {
     });
 }
 
-export async function querying(myQueryString: string, client: Client): Promise<JSON[]> {
-    return await new Promise<JSON[]>((resolve, reject) => {
+export async function querying(
+    myQueryString: string,
+    client: Client,
+): Promise<Record<string, string | number | boolean | Date>[]> {
+    return await new Promise<Record<string, string | number | boolean | Date>[]>((resolve, reject) => {
         client.query(myQueryString, (err: Error, res) => {
             if (err) {
-                console.error(err.stack);
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                 reject(err);
             } else {
-                resolve(res.rows);
+                const myRecords: Record<string, string | number | boolean | Date>[] = [];
+                res.rows.forEach((obj) => {
+                    const keys = Object.keys(obj);
+                    const myRecord: Record<string, string | number | boolean | Date> = {};
+                    keys.forEach((key) => {
+                        switch (true) {
+                            case obj[key] instanceof Date:
+                                myRecord[key] = <Date>obj[key];
+                                break;
+                            case typeof obj[key] === 'string':
+                                myRecord[key] = <string>obj[key];
+                                break;
+                            case typeof obj[key] === 'number':
+                                myRecord[key] = <number>obj[key];
+                                break;
+                            case typeof obj[key] === 'boolean':
+                                myRecord[key] = <boolean>obj[key];
+                                break;
+                            default:
+                                reject(Error('One of the properties was not (string | number | boolean | Date)!'));
+                                break;
+                        }
+                    });
+                    myRecords.push(myRecord);
+                });
+                resolve(myRecords);
             }
         });
     });

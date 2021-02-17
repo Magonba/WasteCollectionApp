@@ -2,6 +2,8 @@
 CREATE SCHEMA IF NOT EXISTS usersprojects;
 CREATE TABLE IF NOT EXISTS usersprojects.users (
   email varchar(255) NOT NULL,
+  admini BOOLEAN NOT NULL,
+  passwort varchar(255) NOT NULL,
   PRIMARY KEY(email)
 );
 CREATE TABLE IF NOT EXISTS usersprojects.projects (

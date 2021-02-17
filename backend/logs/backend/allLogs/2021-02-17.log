@@ -1,0 +1,7 @@
+{"message":"Some information","level":"silly","time":"10:2:41:12"}
+{"message":"Some information2","level":"debug","time":"10:2:41:12"}
+{"message":"Some information3","level":"verbose","time":"10:2:41:13"}
+{"message":"Some information4","level":"info","time":"10:2:41:13"}
+{"message":"Some information5","level":"warn","time":"10:2:41:20"}
+{"message":"Some information6","level":"error","time":"10:2:41:21"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"10:2:41:590"}

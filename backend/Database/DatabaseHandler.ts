@@ -1,8 +1,11 @@
 import { exec } from 'child_process';
-import { Client, Pool } from 'pg';
+import { Logger } from '../Logger/Logger';
+import { Pool } from 'pg';
 import * as fs from 'fs';
 import dotenv from 'dotenv';
-dotenv.config(); // necessary for accessing process.env variable
+import lodash from 'lodash';
+
+dotenv.config({ path: '../../.env' }); // necessary for accessing process.env variable
 
 //Singleton
 export class DatabaseHandler {
@@ -24,7 +27,7 @@ export class DatabaseHandler {
     private constructor() {}
 
     //FactoryMethod of DatabaseHandler
-    public static async getDatabaseHandler(client: Client): Promise<DatabaseHandler> {
+    public static async getDatabaseHandler(): Promise<DatabaseHandler> {
         if (DatabaseHandler.dbHandler.poolUp === false) {
             //setup new pool
             DatabaseHandler.dbHandler.pool = new Pool({
@@ -35,36 +38,31 @@ export class DatabaseHandler {
             });
             //pool is now up
             DatabaseHandler.dbHandler.poolUp = true;
-            //setup Database
+        }
+
+        //query the tables with schema usersprojects
+        const setupTables: Record<
+            string,
+            string | number | boolean | Date
+        >[] = await DatabaseHandler.dbHandler.querying(
+            `SELECT table_name FROM information_schema.tables WHERE table_schema = 'usersprojects'`,
+        );
+
+        //setup check variables (do the tables users, projects and userprojects exist?)
+        const usersTable: boolean = setupTables.some((elem) => {
+            return lodash.isEqual(elem, { table_name: 'users' });
+        });
+        const projectsTable: boolean = setupTables.some((elem) => {
+            return lodash.isEqual(elem, { table_name: 'projects' });
+        });
+        const userprojectsTable: boolean = setupTables.some((elem) => {
+            return lodash.isEqual(elem, { table_name: 'userprojects' });
+        });
+
+        //if one of those tables does not exist, run the setup sql script
+        if (!usersTable || !projectsTable || !userprojectsTable) {
             await DatabaseHandler.dbHandler.execSQLScript('./backend/Database/setupDB.sql');
         }
-        //console.log('Test');
-        /*const client = new Client({
-            connectionString: 'postgresql://wastecollectiondata:wastecollectiondata@localhost:5432/wastecollectiondata', // postgresql://user:password@server:portnb/dbname
-        });
-        const test = await new Promise<JSON[]>((resolve, reject) => {
-            console.log('Test2');
-            client.query(
-                `SELECT table_name FROM information_schema.tables 
-            WHERE table_schema = 'usersprojects'`,
-                (err: Error, res) => {
-                    console.log('Test3');
-                    if (err) {
-                        console.error(err.stack);
-                        reject(err);
-                    } else {
-                        resolve(res.rows);
-                    }
-                },
-            );
-        });
-        console.log('test: ');
-        console.log(test);
-        client.end();*/
-        const test2 = await DatabaseHandler.dbHandler.querying(`SELECT table_name FROM information_schema.tables 
-        WHERE table_schema = 'usersprojects'`);
-        console.log('test2: ');
-        console.log(test2);
 
         //return static (private) dbHandler
         return DatabaseHandler.dbHandler;
@@ -75,15 +73,39 @@ export class DatabaseHandler {
         this.poolUp = false;
     }
 
-    public async querying(queryString: string): Promise<JSON[]> {
-        return await new Promise<JSON[]>((resolve, reject) => {
+    public async querying(queryString: string): Promise<Record<string, string | number | boolean | Date>[]> {
+        return await new Promise<Record<string, string | number | boolean | Date>[]>((resolve, reject) => {
             this.pool.query(queryString, (err: Error, res) => {
                 if (err) {
-                    console.error(queryString + ' &&&&& ' + err.stack);
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                     reject(err);
                 } else {
-                    //console.log('res.rows: ' + res.rows + 'typeof: ' + typeof res);
-                    resolve(res.rows);
+                    const myRecords: Record<string, string | number | boolean | Date>[] = [];
+                    res.rows.forEach((obj) => {
+                        const keys = Object.keys(obj);
+                        const myRecord: Record<string, string | number | boolean | Date> = {};
+                        keys.forEach((key) => {
+                            switch (true) {
+                                case obj[key] instanceof Date:
+                                    myRecord[key] = <Date>obj[key];
+                                    break;
+                                case typeof obj[key] === 'string':
+                                    myRecord[key] = <string>obj[key];
+                                    break;
+                                case typeof obj[key] === 'number':
+                                    myRecord[key] = <number>obj[key];
+                                    break;
+                                case typeof obj[key] === 'boolean':
+                                    myRecord[key] = <boolean>obj[key];
+                                    break;
+                                default:
+                                    reject(Error('One of the properties was not (string | number | boolean | Date)!'));
+                                    break;
+                            }
+                        });
+                        myRecords.push(myRecord);
+                    });
+                    resolve(myRecords);
                 }
             });
         });
@@ -100,8 +122,9 @@ export class DatabaseHandler {
     private async setupOrDeleteProject(projectname: string, setupOrDelete: string): Promise<void> {
         //exit if createOrDelete variable is neither 'create' or 'delete'
         if (setupOrDelete !== 'setup' && setupOrDelete !== 'delete') {
-            console.error(
+            Logger.getLogger().fileAndConsoleLog(
                 "String variable setupOrDelete of the function setupOrDeleteProject() has to be either 'setup' or 'delete'",
+                'error',
             );
             return Promise.reject(
                 "String variable setupOrDelete of the function setupOrDeleteProject() has to be either 'setup' or 'delete'",
@@ -122,7 +145,7 @@ export class DatabaseHandler {
         let SQLTemplateFileProject = await new Promise<string>((resolve, reject) => {
             fs.readFile(SQLTemplateAbsPath, 'utf8', (err: Error | null, sql: string) => {
                 if (err) {
-                    console.error(err.stack);
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                     reject(err);
                 } else {
                     resolve(sql);
@@ -140,7 +163,7 @@ export class DatabaseHandler {
                 SQLTemplateFileProject,
                 (err: Error | null) => {
                     if (err) {
-                        console.error(err.stack);
+                        Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                         reject(err);
                     } else {
                         resolve();
@@ -163,15 +186,13 @@ export class DatabaseHandler {
                     `rm ${process.env.SETUP_PROJECT_RELPATH}setupProject${projectname}.sql ${process.env.DELETE_PROJECT_RELPATH}deleteProject${projectname}.sql`,
                     (err, stdout, stderr) => {
                         if (stdout !== null && stdout !== '') {
-                            //process.stdout.write('stdout: ' + stdout);
-                            //console.log("stdout is '" + stdout + "'");
+                            Logger.getLogger().dbLog(stdout, 'silly');
                         }
                         if (stderr !== null && stderr !== '') {
-                            //process.stderr.write('stderr: ' + stderr);
-                            //console.error('stderr: ' + stderr);
+                            Logger.getLogger().dbLog(stderr, 'warn');
                         }
                         if (err !== null) {
-                            //console.error('exec error: ' + err.stack);
+                            Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                             reject(err);
                         }
                         resolve();
@@ -188,15 +209,13 @@ export class DatabaseHandler {
                 `${process.env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASSWORD} ${process.env.DB_HOST} ${process.env.DB_PORT} ${absSQLFilePath}`,
                 function (err, stdout, stderr) {
                     if (stdout !== null && stdout !== '') {
-                        //process.stdout.write('stdout: ' + stdout);
-                        //console.log("stdout is '" + stdout + "'");
+                        Logger.getLogger().dbLog(stdout, 'silly');
                     }
                     if (stderr !== null && stderr !== '') {
-                        //process.stderr.write('stderr' + stderr);
-                        //console.error("stderr is '" + stderr + "'");
+                        Logger.getLogger().dbLog(stderr, 'warn');
                     }
                     if (err !== null) {
-                        //console.error('exec error: ' + err.stack);
+                        Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                         reject(err);
                     }
                     resolve();
