@@ -8,22 +8,26 @@ export class User {
     private passwordUnsafeVar: string; //should be modified!!!
     private projects: Project[] = []; //addProject(...) and deleteProject(...) will be managed/called through the Model class/object
 
-    private static dbHandler: DatabaseHandler;
-
-    //private constructor in order to create dbHandler with await (since await is only allowed in async functions)
     private constructor(email: string, admin: boolean, passwordUnsafeVar: string) {
-        //constructor is not finished (db queries missing)
         this.email = email;
         this.admin = admin;
         this.passwordUnsafeVar = passwordUnsafeVar;
     }
 
-    public static async createUser(email: string, admin: boolean, passwordUnsafeVar: string): Promise<User> {
-        //create dbHandler as soon as possible. Since this method is the first method called of this class, dbHandler is created here.
-        if (typeof User.dbHandler === 'undefined') {
-            User.dbHandler = await DatabaseHandler.getDatabaseHandler();
-        }
+    //returns a User object without modifying the database
+    //use this method if user is already registered in database (i.e. when reading database at setup of program)
+    public static getUserObject(email: string, admin: boolean, passwordUnsafeVar: string): User {
+        return new User(email, admin, passwordUnsafeVar);
+    }
 
+    //returns a User object AND updates database with user entry
+    //use this method if the user is not yet registered in database
+    public static async createUser(email: string, admin: boolean, passwordUnsafeVar: string): Promise<User> {
+        //insert user to database
+        await (await DatabaseHandler.getDatabaseHandler()).querying(
+            `INSERT INTO usersprojects.users VALUES ('${email}', '${admin}, '${passwordUnsafeVar}');`,
+        );
+        //return user object
         return new User(email, admin, passwordUnsafeVar);
     }
 
@@ -33,7 +37,7 @@ export class User {
 
     public async setMail(email: string): Promise<void> {
         //change email in database
-        await User.dbHandler
+        await (await DatabaseHandler.getDatabaseHandler())
             .querying(
                 `UPDATE usersprojects.users
                 SET email = '${email}'
@@ -45,6 +49,7 @@ export class User {
             })
             .catch((err: Error) => {
                 Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
             });
     }
 
@@ -54,7 +59,7 @@ export class User {
 
     public async setAdmin(admin: boolean): Promise<void> {
         //change admini in database
-        await User.dbHandler
+        await (await DatabaseHandler.getDatabaseHandler())
             .querying(
                 `UPDATE usersprojects.users
                 SET admini = ${admin}
@@ -66,6 +71,7 @@ export class User {
             })
             .catch((err: Error) => {
                 Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
             });
     }
 
@@ -75,7 +81,7 @@ export class User {
 
     public async setPassword(newPassword: string): Promise<void> {
         //change passwort in database
-        await User.dbHandler
+        await (await DatabaseHandler.getDatabaseHandler())
             .querying(
                 `UPDATE usersprojects.users
                 SET passwort = '${newPassword}'
@@ -87,6 +93,7 @@ export class User {
             })
             .catch((err: Error) => {
                 Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
             });
     }
 
@@ -97,77 +104,61 @@ export class User {
     //private setter for projects because it should be used just for reading values from the database
     //in order to change the projects array from outside use addProject(...) and deleteProject(...)
     //for the moment: just use addProject(...) and deleteProject(...) to modify the User projects
-    /*private setProjects() {
+    //private setProjects() {}
 
-    }*/
+    //if project - user connection is already established in database (e.g. when reading the database)
+    public addProjectObject(project: Project): void {
+        this.projects.push(project);
+    }
 
+    //if project - user connection is NOT established in the database
     public async addProject(project: Project): Promise<void> {
-        const userProject: JSON[] = await User.dbHandler.querying(
-            `SELECT * FROM usersprojects.userprojects
-            WHERE projectid = '${project.getProjectName()}' AND userid = '${this.getMail()}'`,
-        );
-
-        if (userProject.length < 1) {
-            //in this case create
-            //1. project - user connection in db
-            await this.addProjectToUserDB(project).catch((err: Error) => {
-                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
-                return;
-            });
-            //2. add project to user inside the User Object
-            this.addProjectToUser(project);
-            //3. add user to project inside the Project Object
-            await project.addUser(this);
-        } else {
-            //in this case add only project inside User Object (since the other two were already executed inside the Project class)
-            this.addProjectToUser(project);
-        }
+        //create
+        //1. project - user connection in db
+        await this.addProjectToUserDB(project).catch((err: Error) => {
+            Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+            throw err;
+        });
+        //2. add project to user inside the User Object
+        this.projects.push(project);
+        //3. add user to project inside the Project Object
+        project.addUserObject(this);
     }
 
     private async addProjectToUserDB(project: Project): Promise<void> {
         //change userprojects in database
-        await User.dbHandler.querying(
+        await (await DatabaseHandler.getDatabaseHandler()).querying(
             `INSERT INTO usersprojects.userprojects VALUES ('${this.getMail()}', '${project.getProjectName()}');`,
         );
     }
 
-    private addProjectToUser(project: Project): void {
-        this.projects.push(project);
+    //if user - project connection was already deleted in database
+    public deleteProjectObject(projectToDelete: Project): void {
+        this.projects = this.projects.filter((project) => {
+            return project !== projectToDelete;
+        });
     }
 
-    public async deleteProject(project: Project): Promise<void> {
-        const userProject: JSON[] = await User.dbHandler.querying(
-            `SELECT * FROM usersprojects.userprojects
-            WHERE projectid = '${project.getProjectName()}' AND userid = '${this.getMail()}'`,
-        );
-
-        if (userProject.length > 0) {
-            //in this case delete:
-            //1. project - user connection in db
-            await this.deleteProjectFromUserDB(project).catch((err: Error) => {
-                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
-                return;
-            });
-            //2. project from user inside the User Object
-            this.deleteProjectFromUser(project);
-            //3. user from Project Object
-            await project.deleteUser(this);
-        } else {
-            //in this case delete only project inside User Object (since the other two were already executed inside the Project class)
-            this.deleteProjectFromUser(project);
-        }
+    //if user - project connection was NOT deleted in database
+    public async deleteProject(projectToDelete: Project): Promise<void> {
+        //delete:
+        //1. project - user connection in db
+        await this.deleteProjectFromUserDB(projectToDelete).catch((err: Error) => {
+            Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+            throw err;
+        });
+        //2. project from user inside the User Object
+        this.projects = this.projects.filter((project) => {
+            return project !== projectToDelete;
+        });
+        //3. user from Project Object
+        projectToDelete.deleteUserObject(this);
     }
 
     private async deleteProjectFromUserDB(project: Project): Promise<void> {
         //change userprojects in database
-        await User.dbHandler.querying(
+        await (await DatabaseHandler.getDatabaseHandler()).querying(
             `DELETE FROM usersprojects.userprojects WHERE projectid = '${project.getProjectName()}' AND userid = '${this.getMail()}';`,
         );
-    }
-
-    private deleteProjectFromUser(projectToDelete: Project) {
-        this.projects = this.projects.filter((project) => {
-            return project !== projectToDelete;
-        });
     }
 }

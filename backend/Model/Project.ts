@@ -6,31 +6,31 @@ import { VehicleType } from './VehicleType';
 import { Result } from './Result';
 import { Logger } from '../Logger/Logger';
 import { DatabaseHandler } from '../Database/DatabaseHandler';
+import { exec } from 'child_process';
+import dotenv from 'dotenv';
+dotenv.config({ path: '../../.env' }); // necessary for accessing process.env variable
+import { readFile, writeFile } from 'fs';
 
 export class Project {
     private projectname: string;
-    private users: User[] | undefined;
-    private graph: Graph | undefined;
-    private garbageScenarios: GarbageScenario[] | undefined;
-    private collectionPointScenarios: CollectionPointScenario[] | undefined;
-    private vehicleTypes: VehicleType[] | undefined;
-    private results: Result[] | undefined;
+    private users: User[];
+    private graph: Graph;
+    private garbageScenarios: GarbageScenario[];
+    private collectionPointScenarios: CollectionPointScenario[];
+    private vehicleTypes: VehicleType[];
+    private results: Result[];
 
-    //if modifiedBy === undefined Project will not be loaded in Memory
     //as soon as the Project is no longer being modified, modifiedBy switches to undefined
-    //and users, graph, garbageScenarios, collectionPointScenarios, vehicleTypes, results switch to undefined as well
-    //in order to save memory
     private modifiedBy: User | undefined;
 
-    public constructor(
+    private constructor(
         projectname: string,
-        users?: User[],
-        graph?: Graph,
-        garbageScenarios?: GarbageScenario[],
-        collectionPointScenarios?: CollectionPointScenario[],
-        vehicleTypes?: VehicleType[],
-        results?: Result[],
-        modifiedBy?: User,
+        users: User[],
+        graph: Graph,
+        garbageScenarios: GarbageScenario[],
+        collectionPointScenarios: CollectionPointScenario[],
+        vehicleTypes: VehicleType[],
+        results: Result[],
     ) {
         this.projectname = projectname;
         this.users = users;
@@ -39,36 +39,205 @@ export class Project {
         this.collectionPointScenarios = collectionPointScenarios;
         this.vehicleTypes = vehicleTypes;
         this.results = results;
-        this.modifiedBy = modifiedBy;
+    }
+
+    public static async getProjectObject(projectname: string): Promise<Project> {
+        //project is simply in schema 'projectname'
+        //then read the data (graph, users, garbageScenarios, etc) into the object
+        const graph: Graph = await Graph.getGraphObject(projectname);
+        const garbageScenarios: GarbageScenario[] = await GarbageScenario.getGarbageScenariosObjects(
+            projectname,
+            graph.getNodes(),
+        );
+        const collectionPointScenarios: CollectionPointScenario[] = await CollectionPointScenario.getCollectionPointScenariosObjects(
+            projectname,
+            graph.getNodes(),
+        );
+        const vehicleTypes: VehicleType[] = await VehicleType.getVehicleTypesObjects(projectname, graph.getArcs());
+        const results: Result[] = await Result.getResultsObjects(
+            projectname,
+            garbageScenarios,
+            collectionPointScenarios,
+            vehicleTypes,
+            graph.getNodes(),
+        );
+
+        const project: Project = new Project(
+            projectname,
+            [],
+            graph,
+            garbageScenarios,
+            collectionPointScenarios,
+            vehicleTypes,
+            results,
+        );
+
+        return project;
+    }
+
+    public static async createProject(projectname: string): Promise<Project> {
+        //create a completely new project
+        //in usersprojects schema
+        await (await DatabaseHandler.getDatabaseHandler()).querying(
+            `INSERT INTO usersprojects.projects VALUES ('${projectname}');`,
+        );
+
+        //create setup and delete sql files
+        await Project.createProjectSQLFiles(
+            './backend/Database/setupProject/setupProjectTemplate.sql',
+            './backend/Database/deleteProject/deleteProjectTemplate.sql',
+            projectname,
+        );
+
+        //create 'projectname' schema
+        const createProjectSQLPath =
+            process.env.PROJECT_ROOT_PATH + './backend/Database/setupProject/setupProject' + projectname + '.sql';
+        await new Promise<void>((resolve, reject) => {
+            exec(
+                `${process.env.PROJECT_ROOT_PATH}./backend/Database/SQLQueryToDB.bash ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASSWORD} ${process.env.DB_HOST} ${process.env.DB_PORT} ${createProjectSQLPath}`,
+                (err: Error | null, stdout: string | null, stderr: string | null) => {
+                    if (stdout !== null && stdout !== '') {
+                        Logger.getLogger().dbLog(stdout, 'silly');
+                    }
+                    if (stderr !== null && stderr !== '') {
+                        Logger.getLogger().dbLog(stderr, 'warn');
+                    }
+                    if (err !== null) {
+                        Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                        reject(err);
+                    }
+                    resolve();
+                },
+            );
+        });
+
+        //all fields are empty except of projectname
+        //later the fields will be filled with data as the user adds them
+        const project: Project = new Project(projectname, [], Graph.emptyGraph(), [], [], [], []);
+
+        //return project
+        return project;
+    }
+
+    private static async createProjectSQLFiles(
+        setupSQLTemplateRelPath: string,
+        deleteSQLTemplateRelPath: string,
+        projectname: string,
+    ) {
+        //2 steps: create setupProjectXXX.sql file and then deleteProjectXXX.sql file
+        //step 1:
+        //setup path
+        const setupSQLTemplateAbsPath: string = process.env.PROJECT_ROOT_PATH + setupSQLTemplateRelPath;
+
+        //save path to template file without filename for later use
+        const dirOfSetupSQLTemplate: string = setupSQLTemplateAbsPath.split('/').slice(0, -1).join('/');
+
+        //read sql-Template file
+        let sqlFileCreateProject: string = await new Promise<string>((resolve, reject) => {
+            readFile(setupSQLTemplateAbsPath, 'utf8', function (err, sql: string) {
+                if (err) {
+                    Logger.getLogger().fileAndConsoleLog(err.code === undefined ? '' : err.code, 'error');
+                    reject();
+                }
+                resolve(sql);
+            });
+        });
+
+        //replace "REPLACEWITHPROJECTNAME" with projectname
+        sqlFileCreateProject = sqlFileCreateProject.split('REPLACEWITHPROJECTNAME').join(projectname);
+
+        //write createProjectXXX.sql File
+        await new Promise<void>((resolve, reject) => {
+            writeFile(dirOfSetupSQLTemplate + '/setupProject' + projectname + '.sql', sqlFileCreateProject, (err) => {
+                if (err) {
+                    Logger.getLogger().fileAndConsoleLog(err.code === undefined ? '' : err.code, 'error');
+                    reject();
+                } else {
+                    resolve();
+                }
+            });
+        });
+
+        //step 2:
+        //delete path
+        const deleteSQLTemplateAbsPath: string = process.env.PROJECT_ROOT_PATH + deleteSQLTemplateRelPath;
+
+        //save path to template file without filename for later use
+        const dirOfDeleteSQLTemplate = deleteSQLTemplateAbsPath.split('/').slice(0, -1).join('/');
+
+        //read sql-Template file
+        let sqlFileDeleteProject: string = await new Promise<string>((resolve, reject) => {
+            readFile(deleteSQLTemplateAbsPath, 'utf8', (err, sql) => {
+                if (err) {
+                    Logger.getLogger().fileAndConsoleLog(err.code === undefined ? '' : err.code, 'error');
+                    reject();
+                }
+                resolve(sql);
+            });
+        });
+
+        //replace "REPLACEWITHPROJECTNAME" with projectname
+        sqlFileDeleteProject = sqlFileDeleteProject.split('REPLACEWITHPROJECTNAME').join(projectname);
+
+        //write deleteProjectXXX.sql File
+        await new Promise<void>((resolve, reject) => {
+            writeFile(dirOfDeleteSQLTemplate + '/deleteProject' + projectname + '.sql', sqlFileDeleteProject, (err) => {
+                if (err) {
+                    Logger.getLogger().fileAndConsoleLog(err.code === undefined ? '' : err.code, 'error');
+                    reject();
+                } else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    public setModifiedBy(userOrUndefined: User | undefined): void {
+        this.modifiedBy = userOrUndefined;
     }
 
     public getProjectName(): string {
         return this.projectname;
     }
 
-    public async addUser(user: User): Promise<void> {
-        const projectUser: Record<string, string | number | boolean | Date>[] = await (
-            await DatabaseHandler.getDatabaseHandler()
-        ).querying(
-            `SELECT * FROM usersprojects.userprojects
-            WHERE projectid = '${this.getProjectName()}' AND userid = '${user.getMail()}'`,
-        );
+    public getUsers(): User[] {
+        return this.users;
+    }
 
-        if (projectUser.length < 1) {
-            //in this case create
-            //1. user - project connection in db
-            await this.addUserToProjectDB(user).catch((err: Error) => {
+    public async setProjectName(projectname: string): Promise<void> {
+        //change projectname in database
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `UPDATE usersprojects.projects
+                SET projectname = ${projectname}
+                WHERE projectname = '${this.projectname}';`,
+            )
+            .then(() => {
+                //only if db query successful change projectname in memory
+                this.projectname = projectname;
+            })
+            .catch((err: Error) => {
                 Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
-                return;
             });
-            //2. add user to project inside the Project Object
-            this.addUserToProject(user);
-            //3. add project to user inside the User Object
-            await user.addProject(this);
-        } else {
-            //in this case add only user inside Project Object (since the other two were already executed inside the User class)
-            this.addUserToProject(user);
-        }
+    }
+
+    //if project - user connection is already established in database (e.g. when reading the database)
+    public addUserObject(user: User): void {
+        this.users.push(user);
+    }
+
+    //if project - user connection is NOT established in the database
+    public async addUser(user: User): Promise<void> {
+        //create
+        //1. user - project connection in db
+        await this.addUserToProjectDB(user).catch((err: Error) => {
+            Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+            return;
+        });
+        //2. add user to project inside the Project Object
+        this.users.push(user);
+        //3. add project to user inside the User Object
+        user.addProjectObject(this);
     }
 
     private async addUserToProjectDB(user: User) {
@@ -78,39 +247,27 @@ export class Project {
         );
     }
 
-    private addUserToProject(user: User): void {
-        if (typeof this.users === 'undefined') {
-            const err: Error = new Error('users array is undefined');
-            Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
-            throw err;
-        } else {
-            this.users.push(user);
-        }
+    //if user - project connection was already deleted in database
+    public deleteUserObject(userToDelete: User): void {
+        this.users = this.users.filter((user) => {
+            return user !== userToDelete;
+        });
     }
 
-    public async deleteUser(user: User): Promise<void> {
-        const projectUser: Record<string, string | number | boolean | Date>[] = await (
-            await DatabaseHandler.getDatabaseHandler()
-        ).querying(
-            `SELECT * FROM usersprojects.userprojects
-            WHERE projectid = '${this.getProjectName()}' AND userid = '${user.getMail()}'`,
-        );
-
-        if (projectUser.length > 0) {
-            //in this case delete:
-            //1. user - project connection in db
-            await this.deleteUserFromProjectDB(user).catch((err: Error) => {
-                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
-                return;
-            });
-            //2. user from project inside the Project Object
-            this.deleteUserFromProject(user);
-            //3. project from User Object
-            await user.deleteProject(this);
-        } else {
-            //in this case delete only user inside Project Object (since the other two were already executed inside the User class)
-            this.deleteUserFromProject(user);
-        }
+    //if user - project connection still has to be deleted in database
+    public async deleteUser(userToDelete: User): Promise<void> {
+        //delete:
+        //1. user - project connection in db
+        await this.deleteUserFromProjectDB(userToDelete).catch((err: Error) => {
+            Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+            return;
+        });
+        //2. user from project inside the Project Object
+        this.users = this.users.filter((user) => {
+            return user !== userToDelete;
+        });
+        //3. project from User Object
+        userToDelete.deleteProjectObject(this);
     }
 
     private async deleteUserFromProjectDB(user: User): Promise<void> {
@@ -118,17 +275,5 @@ export class Project {
         await (await DatabaseHandler.getDatabaseHandler()).querying(
             `DELETE FROM usersprojects.userprojects WHERE projectid = '${this.getProjectName()}' AND userid = '${user.getMail()}';`,
         );
-    }
-
-    private deleteUserFromProject(userToDelete: User): void {
-        if (typeof this.users === 'undefined') {
-            const err: Error = new Error('users array is undefined');
-            Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
-            throw err;
-        } else {
-            this.users = this.users.filter((user) => {
-                return user !== userToDelete;
-            });
-        }
     }
 }

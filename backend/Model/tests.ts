@@ -77,3 +77,6 @@ const myArr = undefined;
 console.log(typeof myArr);
 console.log(typeof myArr === 'undefined');
 console.log(typeof myArr === undefined);
+
+const date = new Date();
+console.log(date instanceof Date);

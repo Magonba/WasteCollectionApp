@@ -2,11 +2,30 @@ import { MapNode } from './MapNode';
 import { MapArc } from './MapArc';
 
 export class Graph {
-    nodes: MapNode[];
-    arcs: MapArc[];
+    private nodes: MapNode[];
+    private arcs: MapArc[];
 
-    constructor(nodes: MapNode[], arcs: MapArc[]) {
+    private constructor(nodes: MapNode[], arcs: MapArc[]) {
         this.nodes = nodes;
         this.arcs = arcs;
+    }
+
+    public static async getGraphObject(projectname: string): Promise<Graph> {
+        const nodes: MapNode[] = await MapNode.getNodesObjects(projectname);
+        const arcs: MapArc[] = await MapArc.getArcsObjects(projectname, nodes);
+
+        return new Graph(nodes, arcs);
+    }
+
+    public static emptyGraph(): Graph {
+        return new Graph([], []);
+    }
+
+    public getNodes(): MapNode[] {
+        return this.nodes;
+    }
+
+    public getArcs(): MapArc[] {
+        return this.arcs;
     }
 }

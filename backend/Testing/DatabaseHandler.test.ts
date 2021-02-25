@@ -6,11 +6,10 @@ import dotenv from 'dotenv';
 import * as HelperFunctions from './HelperFunctions.test';
 dotenv.config(); // necessary for accessing process.env variable
 let client: Client; // for psql db queries
-const logger = Logger.getLogger();
 
 beforeAll(async () => {
     //start PSQL server
-    logger.fileAndConsoleLog(
+    Logger.getLogger().fileAndConsoleLog(
         "You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error",
         'info',
     );
@@ -29,6 +28,26 @@ afterAll(async () => {
     //end Pool of DatabaseHandler (needed for proper teardown)
     const dbHandler = await DatabaseHandler.getDatabaseHandler();
     dbHandler.endPool();
+
+    //execute a SQL script for deleting the created setup tables and schema (script also works if no tables were created)
+    await new Promise<void>((resolve, reject) => {
+        exec(
+            `${process.env.PROJECT_ROOT_PATH}/backend/Database/SQLQueryToDB.bash ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASSWORD} ${process.env.DB_HOST} ${process.env.DB_PORT} ${process.env.PROJECT_ROOT_PATH}/backend/Database/deleteDB.sql`,
+            (err: Error | null, stdout: string | null, stderr: string | null) => {
+                if (stdout !== null && stdout !== '') {
+                    Logger.getLogger().dbLog(stdout, 'silly');
+                }
+                if (stderr !== null && stderr !== '') {
+                    Logger.getLogger().dbLog(stderr, 'warn');
+                }
+                if (err !== null) {
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                    reject(err);
+                }
+                resolve();
+            },
+        );
+    });
 });
 
 afterEach(async () => {
@@ -44,7 +63,7 @@ afterEach(async () => {
                     Logger.getLogger().dbLog(stderr, 'warn');
                 }
                 if (err !== null) {
-                    logger.fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                     reject(err);
                 }
                 resolve();
