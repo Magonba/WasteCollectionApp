@@ -18,7 +18,7 @@ export class GarbageScenarioVersion {
     ): Promise<GarbageScenarioVersion[]> {
         const garbScenVersionsFromDB: Record<string, string | number | boolean | Date>[] = await (
             await DatabaseHandler.getDatabaseHandler()
-        ).querying(`SELECT * FROM ${projectname}.garbagescenarioversions WHERE title = ${title}`);
+        ).querying(`SELECT * FROM ${projectname}.garbagescenarioversions WHERE title = '${title}'`);
 
         const garbageScenarioVersions: GarbageScenarioVersion[] = [];
 
@@ -29,10 +29,14 @@ export class GarbageScenarioVersion {
             if (typeof garbScenVersionFromDB.title === 'string' && garbScenVersionFromDB.timing instanceof Date) {
                 //create GarbageScenarioVersion
                 //by querying garbagescenarioversions_nodes_waste table
+                const timingToString = `${garbScenVersionFromDB.timing.getFullYear()}-${
+                    garbScenVersionFromDB.timing.getMonth() + 1
+                }-${garbScenVersionFromDB.timing.getDate()} ${garbScenVersionFromDB.timing.getHours()}:${garbScenVersionFromDB.timing.getMinutes()}:${garbScenVersionFromDB.timing.getSeconds()}.${garbScenVersionFromDB.timing.getMilliseconds()}`;
+
                 const nodesWasteFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
                 ).querying(
-                    `SELECT * FROM ${projectname}.garbagescenarioversions_nodes_waste WHERE title = ${title} AND timing = ${garbScenVersionFromDB.timing}`,
+                    `SELECT * FROM ${projectname}.garbagescenarioversions_nodes_waste WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
                 );
 
                 //then initialize nodeswaste array variable correctly
@@ -70,7 +74,6 @@ export class GarbageScenarioVersion {
                         throw err;
                     }
                 }
-
                 //then create GarbageScenarioVersion object
                 const garbageScenarioVersion: GarbageScenarioVersion = new GarbageScenarioVersion(
                     garbScenVersionFromDB.timing,
@@ -90,5 +93,9 @@ export class GarbageScenarioVersion {
 
     public getTiming(): Date {
         return this.timing;
+    }
+
+    public getNodesWaste(): [MapNode, number][] {
+        return this.nodesWaste;
     }
 }

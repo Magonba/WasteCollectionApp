@@ -15,12 +15,45 @@ export class Tour {
         this.tourNodes = tourNodes;
     }
 
+    public static async createTour(
+        projectname: string,
+        id: number,
+        timingResult: Date,
+        tourtime: number,
+        tourwaste: number,
+        tourNodes: [MapNode, number, number][],
+    ): Promise<Tour> {
+        const timingResultToString = `${timingResult.getFullYear()}-${
+            timingResult.getMonth() + 1
+        }-${timingResult.getDate()} ${timingResult.getHours()}:${timingResult.getMinutes()}:${timingResult.getSeconds()}.${timingResult.getMilliseconds()}`;
+
+        await (await DatabaseHandler.getDatabaseHandler()).querying(
+            `INSERT INTO ${projectname}.tours VALUES (${id}, TO_TIMESTAMP('${timingResultToString}', 'YYYY-MM-DD HH:MI:SS.MS'), ${tourtime}, ${tourwaste});`,
+        );
+
+        for (let index = 0; index < tourNodes.length; index = index + 1) {
+            await (await DatabaseHandler.getDatabaseHandler()).querying(
+                `INSERT INTO ${projectname}.tour_nodes VALUES (${tourNodes[index][0].getNodeID()}, ${id}, ${
+                    tourNodes[index][1]
+                }, ${tourNodes[index][2]});`,
+            );
+        }
+
+        return new Tour(id, tourtime, tourwaste, tourNodes);
+    }
+
     public static async getToursObjects(projectname: string, resultTiming: Date, nodes: MapNode[]): Promise<Tour[]> {
         //get Tours
         //by querying tours table
+        const timingToString = `${resultTiming.getFullYear()}-${
+            resultTiming.getMonth() + 1
+        }-${resultTiming.getDate()} ${resultTiming.getHours()}:${resultTiming.getMinutes()}:${resultTiming.getSeconds()}.${resultTiming.getMilliseconds()}`;
+
         const toursFromDB: Record<string, string | number | boolean | Date>[] = await (
             await DatabaseHandler.getDatabaseHandler()
-        ).querying(`SELECT * FROM ${projectname}.tours WHERE timingresult = ${resultTiming}`);
+        ).querying(
+            `SELECT * FROM ${projectname}.tours WHERE timingresult = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
+        );
 
         //create tours variable
         const tours: Tour[] = [];
@@ -49,8 +82,8 @@ export class Tour {
                     if (
                         typeof tourNodeFromDB.nodeid === 'number' &&
                         typeof tourNodeFromDB.tourid === 'number' &&
-                        typeof tourFromDB.wastecollected === 'number' &&
-                        typeof tourFromDB.ordering === 'number'
+                        typeof tourNodeFromDB.wastecollected === 'number' &&
+                        typeof tourNodeFromDB.ordering === 'number'
                     ) {
                         const nodeOfTour: MapNode | undefined = nodes.find((node) => {
                             return node.getNodeID() === tourNodeFromDB.nodeid;
@@ -64,8 +97,8 @@ export class Tour {
 
                         const tourNode: [MapNode, number, number] = [
                             nodeOfTour,
-                            tourFromDB.wastecollected,
-                            tourFromDB.ordering,
+                            tourNodeFromDB.wastecollected,
+                            tourNodeFromDB.ordering,
                         ];
 
                         //push tourNode to tourNodes
@@ -92,5 +125,21 @@ export class Tour {
             }
         }
         return tours;
+    }
+
+    public getTourID(): number {
+        return this.id;
+    }
+
+    public getTourTime(): number {
+        return this.tourtime;
+    }
+
+    public getTourWaste(): number {
+        return this.tourwaste;
+    }
+
+    public getTourNodes(): [MapNode, number, number][] {
+        return this.tourNodes;
     }
 }

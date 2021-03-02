@@ -83,10 +83,12 @@ export class Result {
                 }
 
                 //find correct garbageScenarioVersion
+                //new variable with explicit Date type to deactivate warnings in find-method
+                const timinggarbsc: Date = resultFromDB.timinggarbsc;
                 const garbageScenarioVersion:
                     | GarbageScenarioVersion
                     | undefined = garbScen.getGarbageScenarioVersions().find((gsv) => {
-                    return gsv.getTiming() === resultFromDB.timinggarbsc;
+                    return gsv.getTiming().getTime() === timinggarbsc.getTime();
                 });
 
                 if (!(garbageScenarioVersion instanceof GarbageScenarioVersion)) {
@@ -110,10 +112,12 @@ export class Result {
                 }
 
                 //find correct collectionPointScenarioVersion
+                //new variable with explicit Date type to deactivate warnings in find-method
+                const timingcpsc: Date = resultFromDB.timingcpsc;
                 const collectionPointScenarioVersion:
                     | CollectionPointScenarioVersion
                     | undefined = collPointScen.getCollectionPointScenarioVersions().find((cpsv) => {
-                    return cpsv.getTiming() === resultFromDB.timingcpsc;
+                    return cpsv.getTiming().getTime() === timingcpsc.getTime();
                 });
 
                 if (!(collectionPointScenarioVersion instanceof CollectionPointScenarioVersion)) {
@@ -124,9 +128,15 @@ export class Result {
 
                 //get vehicleTypeVersions
                 //by querying db for them
+                const timingToString = `${resultFromDB.timing.getFullYear()}-${
+                    resultFromDB.timing.getMonth() + 1
+                }-${resultFromDB.timing.getDate()} ${resultFromDB.timing.getHours()}:${resultFromDB.timing.getMinutes()}:${resultFromDB.timing.getSeconds()}.${resultFromDB.timing.getMilliseconds()}`;
+
                 const resultsVehiclesFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
-                ).querying(`SELECT * FROM ${projectname}.resultsvehicles WHERE timingresult = ${resultFromDB.timing}`);
+                ).querying(
+                    `SELECT * FROM ${projectname}.resultsvehicles WHERE timingresult = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
+                );
 
                 //create empty array with vehicleTypeVersions and then fill it up in for loop
                 const vehicleTypeVersions: VehicleTypeVersion[] = [];
@@ -153,10 +163,12 @@ export class Result {
                         }
 
                         //find vehicleTypeVersion by timing
+                        //new variable with explicit Date type to deactivate warnings in find-method
+                        const timingvehicletype: Date = resultVehicleFromDB.timingvehicletype;
                         const vehicleTypeVersion:
                             | VehicleTypeVersion
                             | undefined = vehType.getVehicleTypeVersions().find((vtv) => {
-                            return vtv.getTiming() === resultVehicleFromDB.timingvehicletype;
+                            return vtv.getTiming().getTime() === timingvehicletype.getTime();
                         });
 
                         if (!(vehicleTypeVersion instanceof VehicleTypeVersion)) {
@@ -201,5 +213,37 @@ export class Result {
             }
         }
         return results;
+    }
+
+    public getTiming(): Date {
+        return this.timing;
+    }
+
+    public getGarbageScenarioVersion(): GarbageScenarioVersion {
+        return this.garbageScenarioVersion;
+    }
+
+    public getCollectionPointScenarioVersion(): CollectionPointScenarioVersion {
+        return this.collectionPointScenarioVersion;
+    }
+
+    public getVehicleTypeVersions(): VehicleTypeVersion[] {
+        return this.vehicleTypeVersions;
+    }
+
+    public getModel(): string {
+        return this.model;
+    }
+
+    public getMaxWalkingDistance(): number {
+        return this.maxWalkingDistance;
+    }
+
+    public getTotalTime(): number {
+        return this.totalTime;
+    }
+
+    public getTours(): Tour[] {
+        return this.tours;
     }
 }

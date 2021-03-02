@@ -18,7 +18,7 @@ export class VehicleTypeVersion {
     ): Promise<VehicleTypeVersion[]> {
         const vehicleTypeVersionsFromDB: Record<string, string | number | boolean | Date>[] = await (
             await DatabaseHandler.getDatabaseHandler()
-        ).querying(`SELECT * FROM ${projectname}.vehicletypeversions WHERE title = ${title}`);
+        ).querying(`SELECT * FROM ${projectname}.vehicletypeversions WHERE title = '${title}'`);
 
         const vehicleTypeVersions: VehicleTypeVersion[] = [];
 
@@ -29,10 +29,14 @@ export class VehicleTypeVersion {
             if (typeof vehicleTypeVersionFromDB.title === 'string' && vehicleTypeVersionFromDB.timing instanceof Date) {
                 //create VehicleTypeVersion
                 //by querying vehicletypeversions_nodes_activatedarcs table
+                const timingToString = `${vehicleTypeVersionFromDB.timing.getFullYear()}-${
+                    vehicleTypeVersionFromDB.timing.getMonth() + 1
+                }-${vehicleTypeVersionFromDB.timing.getDate()} ${vehicleTypeVersionFromDB.timing.getHours()}:${vehicleTypeVersionFromDB.timing.getMinutes()}:${vehicleTypeVersionFromDB.timing.getSeconds()}.${vehicleTypeVersionFromDB.timing.getMilliseconds()}`;
+
                 const arcsActivatedFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
                 ).querying(
-                    `SELECT * FROM ${projectname}.vehicletypeversions_nodes_activatedarcs WHERE title = ${title} AND timing = ${vehicleTypeVersionFromDB.timing}`,
+                    `SELECT * FROM ${projectname}.vehicletypeversions_nodes_activatedarcs WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
                 );
 
                 //then initialize arcsActivated array variable correctly
@@ -95,5 +99,9 @@ export class VehicleTypeVersion {
 
     public getTiming(): Date {
         return this.timing;
+    }
+
+    public getArcsActivated(): [MapArc, boolean][] {
+        return this.arcsActivated;
     }
 }

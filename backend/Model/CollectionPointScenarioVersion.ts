@@ -3,10 +3,10 @@ import { Logger } from '../Logger/Logger';
 import { MapNode } from './MapNode';
 
 export class CollectionPointScenarioVersion {
-    timing: Date; //maybe adapt (not string)
-    nodesPotCP: [MapNode, boolean][]; //referenced MapNode and boolean potentialCollectionPoint
+    private timing: Date; //maybe adapt (not string)
+    private nodesPotCP: [MapNode, boolean][]; //referenced MapNode and boolean potentialCollectionPoint
 
-    constructor(timing: Date, nodesPotCP: [MapNode, boolean][]) {
+    private constructor(timing: Date, nodesPotCP: [MapNode, boolean][]) {
         this.timing = timing;
         this.nodesPotCP = nodesPotCP;
     }
@@ -18,7 +18,7 @@ export class CollectionPointScenarioVersion {
     ): Promise<CollectionPointScenarioVersion[]> {
         const collPointScenVersionsFromDB: Record<string, string | number | boolean | Date>[] = await (
             await DatabaseHandler.getDatabaseHandler()
-        ).querying(`SELECT * FROM ${projectname}.collectionpointscenarioversions WHERE title = ${title}`);
+        ).querying(`SELECT * FROM ${projectname}.collectionpointscenarioversions WHERE title = '${title}'`);
 
         const collectionPointScenarioVersions: CollectionPointScenarioVersion[] = [];
 
@@ -32,10 +32,14 @@ export class CollectionPointScenarioVersion {
             ) {
                 //create CollectionPointScenarioVersion
                 //by querying collectionpointscenarioversions_nodes_potcp table
+                const timingToString = `${collPointScenVersionFromDB.timing.getFullYear()}-${
+                    collPointScenVersionFromDB.timing.getMonth() + 1
+                }-${collPointScenVersionFromDB.timing.getDate()} ${collPointScenVersionFromDB.timing.getHours()}:${collPointScenVersionFromDB.timing.getMinutes()}:${collPointScenVersionFromDB.timing.getSeconds()}.${collPointScenVersionFromDB.timing.getMilliseconds()}`;
+
                 const nodesPotCPFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
                 ).querying(
-                    `SELECT * FROM ${projectname}.collectionpointscenarioversions_nodes_potcp WHERE title = ${title} AND timing = ${collPointScenVersionFromDB.timing}`,
+                    `SELECT * FROM ${projectname}.collectionpointscenarioversions_nodes_potcp WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
                 );
 
                 //then initialize nodesPotCP array variable correctly
@@ -93,5 +97,9 @@ export class CollectionPointScenarioVersion {
 
     public getTiming(): Date {
         return this.timing;
+    }
+
+    public getNodesPotCP(): [MapNode, boolean][] {
+        return this.nodesPotCP;
     }
 }

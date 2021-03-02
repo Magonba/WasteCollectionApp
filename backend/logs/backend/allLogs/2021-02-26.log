@@ -1,0 +1,229 @@
+{"message":"Some information","level":"silly","time":"12:1:18:291"}
+{"message":"Some information2","level":"debug","time":"12:1:18:292"}
+{"message":"Some information3","level":"verbose","time":"12:1:18:292"}
+{"message":"Some information4","level":"info","time":"12:1:18:293"}
+{"message":"Some information5","level":"warn","time":"12:1:18:300"}
+{"message":"Some information6","level":"error","time":"12:1:18:302"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"12:1:19:26"}
+{"message":"Error: Command failed: /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Database/SQLQueryToDB.bash wastecollectiondata wastecollectiondata wastecollectiondata localhost 5432 /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Testing/setupSomeProjects.sql\npsql:/home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/backend/Testing/setupSomeProjects.sql:1: error: \\connect: invalid integer value \"wastecollectiondata\" for connection option \"port\"\n\n    at ChildProcess.exithandler (node:child_process:333:12)\n    at ChildProcess.emit (node:events:379:20)\n    at maybeClose (node:internal/child_process:1065:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:296:5)","level":"error","time":"12:1:22:716"}
+{"message":"error: relation \"fribourg.nodes\" does not exist\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"12:1:23:279"}
+{"message":"Error: Command failed: /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Database/SQLQueryToDB.bash wastecollectiondata wastecollectiondata wastecollectiondata localhost 5432 /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Testing/deleteSomeProjects.sql\npsql:/home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/backend/Testing/deleteSomeProjects.sql:1: error: \\connect: invalid integer value \"wastecollectiondata\" for connection option \"port\"\n\n    at ChildProcess.exithandler (node:child_process:333:12)\n    at ChildProcess.emit (node:events:379:20)\n    at maybeClose (node:internal/child_process:1065:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:296:5)","level":"error","time":"12:1:23:633"}
+{"message":"Some information","level":"silly","time":"13:27:41:467"}
+{"message":"Some information2","level":"debug","time":"13:27:41:467"}
+{"message":"Some information3","level":"verbose","time":"13:27:41:468"}
+{"message":"Some information4","level":"info","time":"13:27:41:468"}
+{"message":"Some information5","level":"warn","time":"13:27:41:476"}
+{"message":"Some information6","level":"error","time":"13:27:41:477"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"13:27:41:790"}
+{"message":"Error: Command failed: /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Database/SQLQueryToDB.bash wastecollectiondata wastecollectiondata wastecollectiondata localhost 5432 /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Testing/setupSomeProjects.sql\npsql:/home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/backend/Testing/setupSomeProjects.sql:1: error: \\connect: invalid integer value \"wastecollectiondata\" for connection option \"port\"\n\n    at ChildProcess.exithandler (node:child_process:333:12)\n    at ChildProcess.emit (node:events:379:20)\n    at maybeClose (node:internal/child_process:1065:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:296:5)","level":"error","time":"13:27:42:217"}
+{"message":"error: relation \"fribourg.nodes\" does not exist\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"13:27:42:885"}
+{"message":"Error: Command failed: /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Database/SQLQueryToDB.bash wastecollectiondata wastecollectiondata wastecollectiondata localhost 5432 /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Testing/deleteSomeProjects.sql\npsql:/home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/backend/Testing/deleteSomeProjects.sql:1: error: \\connect: invalid integer value \"wastecollectiondata\" for connection option \"port\"\n\n    at ChildProcess.exithandler (node:child_process:333:12)\n    at ChildProcess.emit (node:events:379:20)\n    at maybeClose (node:internal/child_process:1065:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:296:5)","level":"error","time":"13:27:43:232"}
+{"message":"Some information","level":"silly","time":"13:29:57:253"}
+{"message":"Some information2","level":"debug","time":"13:29:57:253"}
+{"message":"Some information3","level":"verbose","time":"13:29:57:253"}
+{"message":"Some information4","level":"info","time":"13:29:57:253"}
+{"message":"Some information5","level":"warn","time":"13:29:57:261"}
+{"message":"Some information6","level":"error","time":"13:29:57:262"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"13:29:57:533"}
+{"message":"Error: Command failed: /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Database/SQLQueryToDB.bash wastecollectiondata wastecollectiondata wastecollectiondata localhost 5432 /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Testing/setupSomeProjects.sql\npsql:/home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/backend/Testing/setupSomeProjects.sql:1: error: \\connect: invalid integer value \"wastecollectiondata\" for connection option \"port\"\n\n    at ChildProcess.exithandler (node:child_process:333:12)\n    at ChildProcess.emit (node:events:379:20)\n    at maybeClose (node:internal/child_process:1065:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:296:5)","level":"error","time":"13:30:0:917"}
+{"message":"error: relation \"fribourg.nodes\" does not exist\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"13:30:1:388"}
+{"message":"Error: Command failed: /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Database/SQLQueryToDB.bash wastecollectiondata wastecollectiondata wastecollectiondata localhost 5432 /home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp//backend/Testing/deleteSomeProjects.sql\npsql:/home/magonba/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/backend/Testing/deleteSomeProjects.sql:1: error: \\connect: invalid integer value \"wastecollectiondata\" for connection option \"port\"\n\n    at ChildProcess.exithandler (node:child_process:333:12)\n    at ChildProcess.emit (node:events:379:20)\n    at maybeClose (node:internal/child_process:1065:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:296:5)","level":"error","time":"13:30:1:757"}
+{"message":"Some information","level":"silly","time":"14:11:42:925"}
+{"message":"Some information2","level":"debug","time":"14:11:42:925"}
+{"message":"Some information3","level":"verbose","time":"14:11:42:926"}
+{"message":"Some information4","level":"info","time":"14:11:42:926"}
+{"message":"Some information5","level":"warn","time":"14:11:42:934"}
+{"message":"Some information6","level":"error","time":"14:11:42:936"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:11:43:115"}
+{"message":"Some information","level":"silly","time":"14:16:54:341"}
+{"message":"Some information2","level":"debug","time":"14:16:54:342"}
+{"message":"Some information3","level":"verbose","time":"14:16:54:342"}
+{"message":"Some information4","level":"info","time":"14:16:54:342"}
+{"message":"Some information5","level":"warn","time":"14:16:54:348"}
+{"message":"Some information6","level":"error","time":"14:16:54:350"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:16:54:588"}
+{"message":"Some information","level":"silly","time":"14:19:4:72"}
+{"message":"Some information2","level":"debug","time":"14:19:4:72"}
+{"message":"Some information3","level":"verbose","time":"14:19:4:73"}
+{"message":"Some information4","level":"info","time":"14:19:4:73"}
+{"message":"Some information5","level":"warn","time":"14:19:4:79"}
+{"message":"Some information6","level":"error","time":"14:19:4:80"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:19:4:343"}
+{"message":"Some information","level":"silly","time":"14:19:47:905"}
+{"message":"Some information2","level":"debug","time":"14:19:47:906"}
+{"message":"Some information3","level":"verbose","time":"14:19:47:906"}
+{"message":"Some information4","level":"info","time":"14:19:47:907"}
+{"message":"Some information5","level":"warn","time":"14:19:47:915"}
+{"message":"Some information6","level":"error","time":"14:19:47:916"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:19:48:277"}
+{"message":"Some information","level":"silly","time":"14:31:39:573"}
+{"message":"Some information2","level":"debug","time":"14:31:39:573"}
+{"message":"Some information3","level":"verbose","time":"14:31:39:574"}
+{"message":"Some information4","level":"info","time":"14:31:39:574"}
+{"message":"Some information5","level":"warn","time":"14:31:39:580"}
+{"message":"Some information6","level":"error","time":"14:31:39:581"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:31:39:847"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:39:41:0"}
+{"message":"Some information","level":"silly","time":"14:39:50:508"}
+{"message":"Some information2","level":"debug","time":"14:39:50:509"}
+{"message":"Some information3","level":"verbose","time":"14:39:50:509"}
+{"message":"Some information4","level":"info","time":"14:39:50:510"}
+{"message":"Some information5","level":"warn","time":"14:39:50:516"}
+{"message":"Some information6","level":"error","time":"14:39:50:517"}
+{"message":"error: relation \"fribourg.nodes\" does not exist\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"14:39:53:386"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:41:9:332"}
+{"message":"Some information","level":"silly","time":"14:41:13:784"}
+{"message":"Some information2","level":"debug","time":"14:41:13:785"}
+{"message":"Some information3","level":"verbose","time":"14:41:13:785"}
+{"message":"Some information4","level":"info","time":"14:41:13:786"}
+{"message":"Some information5","level":"warn","time":"14:41:13:792"}
+{"message":"Some information6","level":"error","time":"14:41:13:793"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:48:33:112"}
+{"message":"Some information","level":"silly","time":"14:48:37:734"}
+{"message":"Some information2","level":"debug","time":"14:48:37:734"}
+{"message":"Some information3","level":"verbose","time":"14:48:37:735"}
+{"message":"Some information4","level":"info","time":"14:48:37:736"}
+{"message":"Some information5","level":"warn","time":"14:48:37:741"}
+{"message":"Some information6","level":"error","time":"14:48:37:743"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:48:54:826"}
+{"message":"Some information","level":"silly","time":"14:48:59:329"}
+{"message":"Some information2","level":"debug","time":"14:48:59:329"}
+{"message":"Some information3","level":"verbose","time":"14:48:59:329"}
+{"message":"Some information4","level":"info","time":"14:48:59:330"}
+{"message":"Some information5","level":"warn","time":"14:48:59:334"}
+{"message":"Some information6","level":"error","time":"14:48:59:335"}
+{"message":"error: relation \"fribourg.nodes\" does not exist\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"14:49:1:654"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:53:24:399"}
+{"message":"Some information","level":"silly","time":"14:53:39:718"}
+{"message":"Some information2","level":"debug","time":"14:53:39:718"}
+{"message":"Some information3","level":"verbose","time":"14:53:39:718"}
+{"message":"Some information4","level":"info","time":"14:53:39:718"}
+{"message":"Some information5","level":"warn","time":"14:53:39:719"}
+{"message":"Some information6","level":"error","time":"14:53:39:720"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:54:42:460"}
+{"message":"Some information","level":"silly","time":"14:55:3:390"}
+{"message":"Some information2","level":"debug","time":"14:55:3:390"}
+{"message":"Some information3","level":"verbose","time":"14:55:3:390"}
+{"message":"Some information4","level":"info","time":"14:55:3:391"}
+{"message":"Some information5","level":"warn","time":"14:55:3:391"}
+{"message":"Some information6","level":"error","time":"14:55:3:392"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"15:18:25:304"}
+{"message":"error: column \"summer\" does not exist\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"15:18:40:39"}
+{"message":"Some information","level":"silly","time":"15:18:53:533"}
+{"message":"Some information2","level":"debug","time":"15:18:53:533"}
+{"message":"Some information3","level":"verbose","time":"15:18:53:533"}
+{"message":"Some information4","level":"info","time":"15:18:53:534"}
+{"message":"Some information5","level":"warn","time":"15:18:53:534"}
+{"message":"Some information6","level":"error","time":"15:18:53:535"}
+{"message":"error: column \"summer\" does not exist\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"15:20:29:386"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"15:20:30:936"}
+{"message":"Some information","level":"silly","time":"15:20:53:984"}
+{"message":"Some information2","level":"debug","time":"15:20:53:984"}
+{"message":"Some information3","level":"verbose","time":"15:20:53:984"}
+{"message":"Some information4","level":"info","time":"15:20:53:985"}
+{"message":"Some information5","level":"warn","time":"15:20:53:985"}
+{"message":"Some information6","level":"error","time":"15:20:53:986"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"15:21:22:856"}
+{"message":"Some information","level":"silly","time":"15:21:46:86"}
+{"message":"Some information2","level":"debug","time":"15:21:46:86"}
+{"message":"Some information3","level":"verbose","time":"15:21:46:86"}
+{"message":"Some information4","level":"info","time":"15:21:46:87"}
+{"message":"Some information5","level":"warn","time":"15:21:46:87"}
+{"message":"Some information6","level":"error","time":"15:21:46:88"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"15:22:39:502"}
+{"message":"Some information","level":"silly","time":"15:23:2:801"}
+{"message":"Some information2","level":"debug","time":"15:23:2:802"}
+{"message":"Some information3","level":"verbose","time":"15:23:2:802"}
+{"message":"Some information4","level":"info","time":"15:23:2:802"}
+{"message":"Some information5","level":"warn","time":"15:23:2:803"}
+{"message":"Some information6","level":"error","time":"15:23:2:804"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"15:24:46:123"}
+{"message":"Some information","level":"silly","time":"15:25:10:155"}
+{"message":"Some information2","level":"debug","time":"15:25:10:156"}
+{"message":"Some information3","level":"verbose","time":"15:25:10:156"}
+{"message":"Some information4","level":"info","time":"15:25:10:156"}
+{"message":"Some information5","level":"warn","time":"15:25:10:157"}
+{"message":"Some information6","level":"error","time":"15:25:10:158"}
+{"message":"error: syntax error at or near \"Mar\"\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"15:25:23:228"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"15:25:24:736"}
+{"message":"Some information","level":"silly","time":"15:25:47:509"}
+{"message":"Some information2","level":"debug","time":"15:25:47:509"}
+{"message":"Some information3","level":"verbose","time":"15:25:47:509"}
+{"message":"Some information4","level":"info","time":"15:25:47:510"}
+{"message":"Some information5","level":"warn","time":"15:25:47:510"}
+{"message":"Some information6","level":"error","time":"15:25:47:511"}
+{"message":"error: syntax error at or near \"Mar\"\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"16:26:59:793"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"16:27:1:337"}
+{"message":"Some information","level":"silly","time":"16:27:24:45"}
+{"message":"Some information2","level":"debug","time":"16:27:24:46"}
+{"message":"Some information3","level":"verbose","time":"16:27:24:46"}
+{"message":"Some information4","level":"info","time":"16:27:24:46"}
+{"message":"Some information5","level":"warn","time":"16:27:24:47"}
+{"message":"Some information6","level":"error","time":"16:27:24:47"}
+{"message":"error: syntax error at or near \"Mar\"\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"16:29:7:115"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"16:29:8:603"}
+{"message":"Some information","level":"silly","time":"16:29:31:465"}
+{"message":"Some information2","level":"debug","time":"16:29:31:465"}
+{"message":"Some information3","level":"verbose","time":"16:29:31:465"}
+{"message":"Some information4","level":"info","time":"16:29:31:466"}
+{"message":"Some information5","level":"warn","time":"16:29:31:466"}
+{"message":"Some information6","level":"error","time":"16:29:31:467"}
+{"message":"error: syntax error at or near \"Mar\"\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"16:41:2:581"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"16:41:4:80"}
+{"message":"Some information","level":"silly","time":"16:41:26:941"}
+{"message":"Some information2","level":"debug","time":"16:41:26:941"}
+{"message":"Some information3","level":"verbose","time":"16:41:26:941"}
+{"message":"Some information4","level":"info","time":"16:41:26:942"}
+{"message":"Some information5","level":"warn","time":"16:41:26:943"}
+{"message":"Some information6","level":"error","time":"16:41:26:945"}
+{"message":"error: syntax error at or near \"9\"\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"17:7:30:860"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"17:7:32:424"}
+{"message":"Some information","level":"silly","time":"17:7:55:754"}
+{"message":"Some information2","level":"debug","time":"17:7:55:754"}
+{"message":"Some information3","level":"verbose","time":"17:7:55:754"}
+{"message":"Some information4","level":"info","time":"17:7:55:755"}
+{"message":"Some information5","level":"warn","time":"17:7:55:756"}
+{"message":"Some information6","level":"error","time":"17:7:55:757"}
+{"message":"error: column \"summer\" does not exist\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"17:9:28:26"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"17:9:29:970"}
+{"message":"Some information","level":"silly","time":"17:9:53:772"}
+{"message":"Some information2","level":"debug","time":"17:9:53:772"}
+{"message":"Some information3","level":"verbose","time":"17:9:53:773"}
+{"message":"Some information4","level":"info","time":"17:9:53:773"}
+{"message":"Some information5","level":"warn","time":"17:9:53:773"}
+{"message":"Some information6","level":"error","time":"17:9:53:774"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"17:10:5:790"}
+{"message":"Some information","level":"silly","time":"17:10:28:768"}
+{"message":"Some information2","level":"debug","time":"17:10:28:769"}
+{"message":"Some information3","level":"verbose","time":"17:10:28:769"}
+{"message":"Some information4","level":"info","time":"17:10:28:769"}
+{"message":"Some information5","level":"warn","time":"17:10:28:770"}
+{"message":"Some information6","level":"error","time":"17:10:28:770"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"17:33:24:822"}
+{"message":"Some information","level":"silly","time":"17:33:48:313"}
+{"message":"Some information2","level":"debug","time":"17:33:48:314"}
+{"message":"Some information3","level":"verbose","time":"17:33:48:314"}
+{"message":"Some information4","level":"info","time":"17:33:48:314"}
+{"message":"Some information5","level":"warn","time":"17:33:48:315"}
+{"message":"Some information6","level":"error","time":"17:33:48:315"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"17:46:42:740"}
+{"message":"Some information","level":"silly","time":"17:47:5:274"}
+{"message":"Some information2","level":"debug","time":"17:47:5:274"}
+{"message":"Some information3","level":"verbose","time":"17:47:5:274"}
+{"message":"Some information4","level":"info","time":"17:47:5:274"}
+{"message":"Some information5","level":"warn","time":"17:47:5:275"}
+{"message":"Some information6","level":"error","time":"17:47:5:275"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"17:47:59:646"}
+{"message":"Some information","level":"silly","time":"17:48:33:737"}
+{"message":"Some information2","level":"debug","time":"17:48:33:737"}
+{"message":"Some information3","level":"verbose","time":"17:48:33:738"}
+{"message":"Some information4","level":"info","time":"17:48:33:738"}
+{"message":"Some information5","level":"warn","time":"17:48:33:739"}
+{"message":"Some information6","level":"error","time":"17:48:33:739"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"17:49:4:933"}
+{"message":"Some information","level":"silly","time":"17:49:40:415"}
+{"message":"Some information2","level":"debug","time":"17:49:40:415"}
+{"message":"Some information3","level":"verbose","time":"17:49:40:416"}
+{"message":"Some information4","level":"info","time":"17:49:40:416"}
+{"message":"Some information5","level":"warn","time":"17:49:40:417"}
+{"message":"Some information6","level":"error","time":"17:49:40:418"}

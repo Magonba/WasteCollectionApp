@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.resultsvehicles (
   PRIMARY KEY(timingresult, titlevehicletype, timingvehicletype)
 );
 CREATE TABLE IF NOT EXISTS REPLACEWITHPROJECTNAME.tours (
-  id INT GENERATED ALWAYS AS IDENTITY,
+  id INT NOT NULL,
   timingresult TIMESTAMP NOT NULL,
   tourtime INT NOT NULL,
   tourwaste INT NOT NULL,
