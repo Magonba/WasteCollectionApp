@@ -347,7 +347,6 @@ export class Project {
         vehicleTypeVersions: VehicleTypeVersion[],
         model: string,
         maxWalkingDistance: number,
-        totalTime: number,
     ): Promise<Result> {
         const result: Result = await Result.createResult(
             this.projectname,
@@ -357,7 +356,6 @@ export class Project {
             vehicleTypeVersions,
             model,
             maxWalkingDistance,
-            totalTime,
         );
 
         this.results.push(result);

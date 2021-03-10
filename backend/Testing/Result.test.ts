@@ -230,7 +230,6 @@ test('CreateResult works properly', async () => {
         vehicleTypeVersions,
         'K2',
         65,
-        1000,
     );
 
     //query the db for the new result
@@ -247,7 +246,7 @@ test('CreateResult works properly', async () => {
         timingcpsc: collectionPointScenarioVersion.getTiming(),
         model: 'K2',
         maxwalkingdistance: 65,
-        totaltime: 1000,
+        totaltime: 0,
     });
 
     //inspect result object
@@ -257,7 +256,7 @@ test('CreateResult works properly', async () => {
     expect(result.getVehicleTypeVersions()).toEqual(vehicleTypeVersions);
     expect(result.getModel()).toEqual('K2');
     expect(result.getMaxWalkingDistance()).toEqual(65);
-    expect(result.getTotalTime()).toEqual(1000);
+    expect(result.getTotalTime()).toEqual(0);
     expect(result.getCompleted()).toEqual(false);
 });
 
@@ -320,7 +319,6 @@ test('setTours works properly', async () => {
         vehicleTypeVersions,
         'K2',
         65,
-        1000,
     );
 
     const timing1: Date = new Date(2005, 4, 27, 7, 59, 1);
@@ -358,6 +356,8 @@ test('setTours works properly', async () => {
     ];
 
     await result.setTours('fribourg', toursData);
+
+    expect(result.getTotalTime()).toEqual(tourtime1 + tourtime2 + tourtime3);
 
     expect(result.getTours()[0].getTourTiming()).toEqual(timing1);
     expect(result.getTours()[0].getTourTime()).toEqual(tourtime1);

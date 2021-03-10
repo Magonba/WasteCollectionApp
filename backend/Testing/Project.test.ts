@@ -328,7 +328,6 @@ test('addResult works properly', async () => {
         ],
         'K1',
         20,
-        15,
     );
 
     expect(project.getResults()).toContainEqual(res);
@@ -347,7 +346,7 @@ test('addResult works properly', async () => {
         timingcpsc: timingcpsc,
         model: 'K1',
         maxwalkingdistance: 20,
-        totaltime: 15,
+        totaltime: 0,
     });
 });
 
@@ -372,7 +371,6 @@ test('deleteResult works properly', async () => {
         ],
         'K1',
         20,
-        15,
     );
 
     await project.deleteResult(res);
@@ -393,6 +391,6 @@ test('deleteResult works properly', async () => {
         timingcpsc: timingcpsc,
         model: 'K1',
         maxwalkingdistance: 20,
-        totaltime: 15,
+        totaltime: 0,
     });
 });

@@ -48,7 +48,6 @@ export class Result {
         vehicleTypeVersions: VehicleTypeVersion[],
         model: string,
         maxWalkingDistance: number,
-        totalTime: number,
     ): Promise<Result> {
         const result: Result = new Result(
             timing,
@@ -57,7 +56,7 @@ export class Result {
             vehicleTypeVersions,
             model,
             maxWalkingDistance,
-            totalTime,
+            0,
             [],
         );
 
@@ -92,7 +91,7 @@ export class Result {
         //insert result
         await (await DatabaseHandler.getDatabaseHandler())
             .querying(
-                `INSERT INTO ${projectname}.results VALUES (TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${garbageScenarioVersion.getGSTitle()}', TO_TIMESTAMP('${timingGSVToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${collectionPointScenarioVersion.getCPSTitle()}', TO_TIMESTAMP('${timingCPSVToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${model}', ${maxWalkingDistance}, ${totalTime});`,
+                `INSERT INTO ${projectname}.results VALUES (TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${garbageScenarioVersion.getGSTitle()}', TO_TIMESTAMP('${timingGSVToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${collectionPointScenarioVersion.getCPSTitle()}', TO_TIMESTAMP('${timingCPSVToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${model}', ${maxWalkingDistance}, 0);`,
             )
             .catch((err: Error) => {
                 Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
@@ -328,6 +327,28 @@ export class Result {
         return this.totalTime;
     }
 
+    private async setTotalTime(projectname: string, totalTime: number): Promise<void> {
+        const timingToString = `${this.timing.getFullYear()}-${
+            this.timing.getMonth() + 1
+        }-${this.timing.getDate()} ${this.timing.getHours()}:${this.timing.getMinutes()}:${this.timing.getSeconds()}.${this.timing.getMilliseconds()}`;
+
+        //change totalTime in database
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `UPDATE ${projectname}.results
+                SET totaltime = ${totalTime}
+                WHERE timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS');`,
+            )
+            .then(() => {
+                //only if db query successful change totaltime in memory
+                this.totalTime = totalTime;
+            })
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
+    }
+
     public getTours(): Tour[] {
         return this.tours;
     }
@@ -342,6 +363,7 @@ export class Result {
         toursData: [Date, number, number, [MapNode, number, number][]][],
     ): Promise<void> {
         if (this.completed === false) {
+            //setTours
             for (let index = 0; index < toursData.length; index = index + 1) {
                 this.tours.push(
                     await Tour.createTour(
@@ -354,6 +376,15 @@ export class Result {
                     ),
                 );
             }
+            //setTotalTime
+            const tourTimes: number[] = [];
+            for (let index = 0; index < toursData.length; index = index + 1) {
+                tourTimes.push(toursData[index][1]);
+            }
+            const totalTime = tourTimes.reduce((tourtime1, tourtime2) => tourtime1 + tourtime2);
+            await this.setTotalTime(projectname, totalTime);
+
+            //set completed to true
             this.completed = true;
         }
     }
