@@ -95,8 +95,8 @@ test('Get Tour objects from database works properly', async () => {
     const tours: Tour[] = await Tour.getToursObjects('fribourg', new Date(2008, 5, 11, 3, 25, 11), nodes);
 
     tours.sort((tour1, tour2) => {
-        if (tour1.getTourID() > tour2.getTourID()) return 1;
-        if (tour1.getTourID() < tour2.getTourID()) return -1;
+        if (tour1.getTourTiming() > tour2.getTourTiming()) return 1;
+        if (tour1.getTourTiming() < tour2.getTourTiming()) return -1;
         return 0;
     });
 
@@ -105,9 +105,9 @@ test('Get Tour objects from database works properly', async () => {
 
     //first Tour
     //sorting nodes since they might be unordered (since they come from an sql query)
-    expect(firstTour.getTourID()).toEqual(1);
-    expect(firstTour.getTourTime()).toEqual(123);
-    expect(firstTour.getTourWaste()).toEqual(874);
+    expect(firstTour.getTourTiming()).toEqual(new Date(2006, 3, 10, 2, 15, 23));
+    expect(firstTour.getTourTime()).toEqual(543);
+    expect(firstTour.getTourWaste()).toEqual(1093);
     expect(
         firstTour
             .getTourNodes()
@@ -120,97 +120,97 @@ test('Get Tour objects from database works properly', async () => {
     ).toEqual(1);
     expect(
         firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
-            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-            return 0;
-        })[0][1],
-    ).toEqual(209);
-    expect(
-        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
-            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-            return 0;
-        })[0][2],
-    ).toEqual(1);
-
-    expect(
-        firstTour
-            .getTourNodes()
-            .sort((nodeArr1, nodeArr2) => {
-                if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-                if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-                return 0;
-            })[1][0]
-            .getNodeID(),
-    ).toEqual(2);
-    expect(
-        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
-            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-            return 0;
-        })[1][1],
-    ).toEqual(190);
-    expect(
-        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
-            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-            return 0;
-        })[1][2],
-    ).toEqual(2);
-
-    expect(
-        firstTour
-            .getTourNodes()
-            .sort((nodeArr1, nodeArr2) => {
-                if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-                if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-                return 0;
-            })[2][0]
-            .getNodeID(),
-    ).toEqual(3);
-    expect(
-        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
-            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-            return 0;
-        })[2][1],
-    ).toEqual(409);
-    expect(
-        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
-            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-            return 0;
-        })[2][2],
-    ).toEqual(3);
-
-    //last Tour
-    expect(lastTour.getTourID()).toEqual(2);
-    expect(lastTour.getTourTime()).toEqual(543);
-    expect(lastTour.getTourWaste()).toEqual(1093);
-    expect(
-        lastTour
-            .getTourNodes()
-            .sort((nodeArr1, nodeArr2) => {
-                if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
-                if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
-                return 0;
-            })[0][0]
-            .getNodeID(),
-    ).toEqual(1);
-    expect(
-        lastTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
             if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
             if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
             return 0;
         })[0][1],
     ).toEqual(323);
     expect(
-        lastTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
+        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
             if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
             if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
             return 0;
         })[0][2],
     ).toEqual(3);
+
+    expect(
+        firstTour
+            .getTourNodes()
+            .sort((nodeArr1, nodeArr2) => {
+                if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+                if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+                return 0;
+            })[1][0]
+            .getNodeID(),
+    ).toEqual(2);
+    expect(
+        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
+            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+            return 0;
+        })[1][1],
+    ).toEqual(376);
+    expect(
+        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
+            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+            return 0;
+        })[1][2],
+    ).toEqual(2);
+
+    expect(
+        firstTour
+            .getTourNodes()
+            .sort((nodeArr1, nodeArr2) => {
+                if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+                if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+                return 0;
+            })[2][0]
+            .getNodeID(),
+    ).toEqual(3);
+    expect(
+        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
+            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+            return 0;
+        })[2][1],
+    ).toEqual(312);
+    expect(
+        firstTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
+            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+            return 0;
+        })[2][2],
+    ).toEqual(1);
+
+    //last Tour
+    expect(lastTour.getTourTiming()).toEqual(new Date(2010, 0, 7, 11, 23, 9));
+    expect(lastTour.getTourTime()).toEqual(123);
+    expect(lastTour.getTourWaste()).toEqual(874);
+    expect(
+        lastTour
+            .getTourNodes()
+            .sort((nodeArr1, nodeArr2) => {
+                if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+                if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+                return 0;
+            })[0][0]
+            .getNodeID(),
+    ).toEqual(1);
+    expect(
+        lastTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
+            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+            return 0;
+        })[0][1],
+    ).toEqual(209);
+    expect(
+        lastTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
+            if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
+            if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
+            return 0;
+        })[0][2],
+    ).toEqual(1);
 
     expect(
         lastTour
@@ -228,7 +228,7 @@ test('Get Tour objects from database works properly', async () => {
             if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
             return 0;
         })[1][1],
-    ).toEqual(376);
+    ).toEqual(190);
     expect(
         lastTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
             if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
@@ -253,14 +253,14 @@ test('Get Tour objects from database works properly', async () => {
             if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
             return 0;
         })[2][1],
-    ).toEqual(312);
+    ).toEqual(409);
     expect(
         lastTour.getTourNodes().sort((nodeArr1, nodeArr2) => {
             if (nodeArr1[0].getNodeID() > nodeArr2[0].getNodeID()) return 1;
             if (nodeArr1[0].getNodeID() < nodeArr2[0].getNodeID()) return -1;
             return 0;
         })[2][2],
-    ).toEqual(1);
+    ).toEqual(3);
 });
 
 test('Create Tour works properly', async () => {
@@ -271,30 +271,59 @@ test('Create Tour works properly', async () => {
         return 0;
     });
 
+    const timing: Date = new Date(2005, 4, 27, 7, 59, 1);
+
     const tourNodes: [MapNode, number, number][] = [
         [nodes[0], 687, 1],
         [nodes[1], 456, 2],
         [nodes[2], 569, 3],
     ];
 
-    const tour: Tour = await Tour.createTour('fribourg', 4, new Date(2007, 5, 11, 3, 25, 11), 567, 879, tourNodes);
+    const tour: Tour = await Tour.createTour('fribourg', timing, new Date(2007, 5, 11, 3, 25, 11), 567, 879, tourNodes);
 
-    expect(tour.getTourID()).toEqual(4);
+    expect(tour.getTourTiming()).toEqual(new Date(2005, 4, 27, 7, 59, 1));
     expect(tour.getTourTime()).toEqual(567);
     expect(tour.getTourWaste()).toEqual(879);
     expect(tour.getTourNodes()).toEqual(tourNodes);
 
+    const timingToString = `${timing.getFullYear()}-${
+        timing.getMonth() + 1
+    }-${timing.getDate()} ${timing.getHours()}:${timing.getMinutes()}:${timing.getSeconds()}.${timing.getMilliseconds()}`;
+
     const tourQuery: Record<string, string | number | boolean | Date>[] = await HelperFunctions.querying(
         `SELECT * FROM fribourg.tours
-        WHERE id = 4`,
+        WHERE timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
         client,
     );
     expect(tourQuery).toContainEqual({
-        id: 4,
+        timing: timing,
         timingresult: new Date(2007, 5, 11, 3, 25, 11),
         tourtime: 567,
         tourwaste: 879,
     });
 
     //query and test for tour_nodes
+    const tourNodesQuery: Record<string, string | number | boolean | Date>[] = await HelperFunctions.querying(
+        `SELECT * FROM fribourg.tour_nodes
+        WHERE tourtiming = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
+        client,
+    );
+    expect(tourNodesQuery).toContainEqual({
+        nodeid: 1,
+        tourtiming: timing,
+        wastecollected: 687,
+        ordering: 1,
+    });
+    expect(tourNodesQuery).toContainEqual({
+        nodeid: 2,
+        tourtiming: timing,
+        wastecollected: 456,
+        ordering: 2,
+    });
+    expect(tourNodesQuery).toContainEqual({
+        nodeid: 3,
+        tourtiming: timing,
+        wastecollected: 569,
+        ordering: 3,
+    });
 });

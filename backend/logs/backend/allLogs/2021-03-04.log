@@ -1,0 +1,65 @@
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"11:0:24:895"}
+{"message":"Some information","level":"silly","time":"11:1:35:524"}
+{"message":"Some information2","level":"debug","time":"11:1:35:524"}
+{"message":"Some information3","level":"verbose","time":"11:1:35:525"}
+{"message":"Some information4","level":"info","time":"11:1:35:525"}
+{"message":"Some information5","level":"warn","time":"11:1:35:525"}
+{"message":"Some information6","level":"error","time":"11:1:35:526"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"11:3:43:808"}
+{"message":"Some information","level":"silly","time":"11:5:2:291"}
+{"message":"Some information2","level":"debug","time":"11:5:2:291"}
+{"message":"Some information3","level":"verbose","time":"11:5:2:291"}
+{"message":"Some information4","level":"info","time":"11:5:2:291"}
+{"message":"Some information5","level":"warn","time":"11:5:2:292"}
+{"message":"Some information6","level":"error","time":"11:5:2:293"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"13:42:48:388"}
+{"message":"Some information","level":"silly","time":"13:43:51:38"}
+{"message":"Some information2","level":"debug","time":"13:43:51:38"}
+{"message":"Some information3","level":"verbose","time":"13:43:51:38"}
+{"message":"Some information4","level":"info","time":"13:43:51:38"}
+{"message":"Some information5","level":"warn","time":"13:43:51:40"}
+{"message":"Some information6","level":"error","time":"13:43:51:40"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"13:45:4:735"}
+{"message":"Some information","level":"silly","time":"13:46:22:204"}
+{"message":"Some information2","level":"debug","time":"13:46:22:204"}
+{"message":"Some information3","level":"verbose","time":"13:46:22:204"}
+{"message":"Some information4","level":"info","time":"13:46:22:204"}
+{"message":"Some information5","level":"warn","time":"13:46:22:205"}
+{"message":"Some information6","level":"error","time":"13:46:22:206"}
+{"message":"error: insert or update on table \"garbagescenarioversions\" violates foreign key constraint \"fk_garbagescenario\"\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"13:46:28:798"}
+{"message":"error: insert or update on table \"garbagescenarioversions\" violates foreign key constraint \"fk_garbagescenario\"\n    at Parser.parseErrorMessage (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:357:11)\n    at Parser.handlePacket (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:186:21)\n    at Parser.parse (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/parser.ts:101:30)\n    at Socket.<anonymous> (/mnt/c/Users/Magonba/Desktop/SharedFolderVM/WasteCollectionApp/node_modules/pg-protocol/src/index.ts:7:48)\n    at Socket.emit (node:events:379:20)\n    at addChunk (node:internal/streams/readable:313:12)\n    at readableAddChunk (node:internal/streams/readable:288:9)\n    at Socket.Readable.push (node:internal/streams/readable:227:10)\n    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)","level":"error","time":"13:46:28:800"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"13:50:51:720"}
+{"message":"Some information","level":"silly","time":"13:52:9:156"}
+{"message":"Some information2","level":"debug","time":"13:52:9:156"}
+{"message":"Some information3","level":"verbose","time":"13:52:9:156"}
+{"message":"Some information4","level":"info","time":"13:52:9:156"}
+{"message":"Some information5","level":"warn","time":"13:52:9:158"}
+{"message":"Some information6","level":"error","time":"13:52:9:158"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:14:29:823"}
+{"message":"Some information","level":"silly","time":"14:15:54:875"}
+{"message":"Some information2","level":"debug","time":"14:15:54:876"}
+{"message":"Some information3","level":"verbose","time":"14:15:54:876"}
+{"message":"Some information4","level":"info","time":"14:15:54:876"}
+{"message":"Some information5","level":"warn","time":"14:15:54:878"}
+{"message":"Some information6","level":"error","time":"14:15:54:878"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"14:40:45:631"}
+{"message":"Some information","level":"silly","time":"14:42:0:116"}
+{"message":"Some information2","level":"debug","time":"14:42:0:116"}
+{"message":"Some information3","level":"verbose","time":"14:42:0:116"}
+{"message":"Some information4","level":"info","time":"14:42:0:116"}
+{"message":"Some information5","level":"warn","time":"14:42:0:117"}
+{"message":"Some information6","level":"error","time":"14:42:0:118"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"16:44:3:136"}
+{"message":"Some information","level":"silly","time":"16:45:20:958"}
+{"message":"Some information2","level":"debug","time":"16:45:20:958"}
+{"message":"Some information3","level":"verbose","time":"16:45:20:958"}
+{"message":"Some information4","level":"info","time":"16:45:20:958"}
+{"message":"Some information5","level":"warn","time":"16:45:20:959"}
+{"message":"Some information6","level":"error","time":"16:45:20:960"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"17:48:14:634"}
+{"message":"Some information","level":"silly","time":"17:49:27:978"}
+{"message":"Some information2","level":"debug","time":"17:49:27:978"}
+{"message":"Some information3","level":"verbose","time":"17:49:27:978"}
+{"message":"Some information4","level":"info","time":"17:49:27:979"}
+{"message":"Some information5","level":"warn","time":"17:49:27:980"}
+{"message":"Some information6","level":"error","time":"17:49:27:980"}

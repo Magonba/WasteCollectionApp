@@ -1,0 +1,14 @@
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"0:37:42:540"}
+{"message":"Some information","level":"silly","time":"0:39:42:803"}
+{"message":"Some information2","level":"debug","time":"0:39:42:803"}
+{"message":"Some information3","level":"verbose","time":"0:39:42:803"}
+{"message":"Some information4","level":"info","time":"0:39:42:803"}
+{"message":"Some information5","level":"warn","time":"0:39:42:805"}
+{"message":"Some information6","level":"error","time":"0:39:42:805"}
+{"message":"You might need to start the Postgresql server with the command 'sudo service postgresql start' if you get an ECONNREFUSED Error","level":"info","time":"15:4:0:892"}
+{"message":"Some information","level":"silly","time":"15:4:38:892"}
+{"message":"Some information2","level":"debug","time":"15:4:38:892"}
+{"message":"Some information3","level":"verbose","time":"15:4:38:892"}
+{"message":"Some information4","level":"info","time":"15:4:38:893"}
+{"message":"Some information5","level":"warn","time":"15:4:38:894"}
+{"message":"Some information6","level":"error","time":"15:4:38:895"}

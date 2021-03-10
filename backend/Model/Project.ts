@@ -10,6 +10,9 @@ import { exec } from 'child_process';
 import dotenv from 'dotenv';
 dotenv.config({ path: '../../.env' }); // necessary for accessing process.env variable
 import { readFile, writeFile } from 'fs';
+import { VehicleTypeVersion } from './VehicleTypeVersion';
+import { CollectionPointScenarioVersion } from './CollectionPointScenarioVersion';
+import { GarbageScenarioVersion } from './GarbageScenarioVersion';
 
 export class Project {
     private projectname: string;
@@ -113,7 +116,7 @@ export class Project {
 
         //all fields are empty except of projectname
         //later the fields will be filled with data as the user adds them
-        const project: Project = new Project(projectname, [], Graph.emptyGraph(), [], [], [], []);
+        const project: Project = new Project(projectname, [], Graph.createGraph([], []), [], [], [], []);
 
         //return project
         return project;
@@ -192,16 +195,202 @@ export class Project {
         });
     }
 
-    public setModifiedBy(userOrUndefined: User | undefined): void {
-        this.modifiedBy = userOrUndefined;
-    }
-
     public getProjectName(): string {
         return this.projectname;
     }
 
     public getUsers(): User[] {
         return this.users;
+    }
+
+    public getGraph(): Graph {
+        return this.graph;
+    }
+
+    public getGarbageScenarios(): GarbageScenario[] {
+        return this.garbageScenarios;
+    }
+
+    public async addGarbageScenario(title: string): Promise<GarbageScenario> {
+        const garbageScenario: GarbageScenario = await GarbageScenario.createGarbageScenario(this.projectname, title);
+
+        this.garbageScenarios.push(garbageScenario);
+
+        return garbageScenario;
+    }
+
+    public async deleteGarbageScenario(garbageScenario: GarbageScenario): Promise<void> {
+        //delete all gsvs
+        while (garbageScenario.getGarbageScenarioVersions().length > 0) {
+            garbageScenario.deleteGarbageScenarioVersion(
+                this.projectname,
+                garbageScenario.getGarbageScenarioVersions()[0],
+                this.results,
+            );
+        }
+
+        //delete gs in database
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(`DELETE FROM ${this.projectname}.garbagescenarios WHERE title = '${garbageScenario.getTitle()}';`)
+            .then(() => {
+                //only if db query successful delete garbagescenario from array
+                this.garbageScenarios = this.garbageScenarios.filter((gs) => {
+                    return gs !== garbageScenario;
+                });
+            })
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
+    }
+
+    public getCollectionPointScenarios(): CollectionPointScenario[] {
+        return this.collectionPointScenarios;
+    }
+
+    public async addCollectionPointScenario(title: string): Promise<CollectionPointScenario> {
+        const collectionPointScenario: CollectionPointScenario = await CollectionPointScenario.createCollectionPointScenario(
+            this.projectname,
+            title,
+        );
+
+        this.collectionPointScenarios.push(collectionPointScenario);
+
+        return collectionPointScenario;
+    }
+
+    public async deleteCollectionPointScenario(collectionPointScenario: CollectionPointScenario): Promise<void> {
+        //delete all cpsvs
+        while (collectionPointScenario.getCollectionPointScenarioVersions().length > 0) {
+            collectionPointScenario.deleteCollectionPointScenarioVersion(
+                this.projectname,
+                collectionPointScenario.getCollectionPointScenarioVersions()[0],
+                this.results,
+            );
+        }
+
+        //delete cps in database
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `DELETE FROM ${
+                    this.projectname
+                }.collectionpointscenarios WHERE title = '${collectionPointScenario.getTitle()}';`,
+            )
+            .then(() => {
+                //only if db query successful delete collectionpointscenario from array
+                this.collectionPointScenarios = this.collectionPointScenarios.filter((cps) => {
+                    return cps !== collectionPointScenario;
+                });
+            })
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
+    }
+
+    public getVehicleTypes(): VehicleType[] {
+        return this.vehicleTypes;
+    }
+
+    public async addVehicleType(
+        title: string,
+        averageSpeed: number,
+        averageStopTime: number,
+        vehicleCapacity: number,
+    ): Promise<VehicleType> {
+        const vehicleType: VehicleType = await VehicleType.createVehicleType(
+            this.projectname,
+            title,
+            averageSpeed,
+            averageStopTime,
+            vehicleCapacity,
+        );
+
+        this.vehicleTypes.push(vehicleType);
+
+        return vehicleType;
+    }
+
+    public async deleteVehicleType(vehicleType: VehicleType): Promise<void> {
+        //delete all vtvs
+        while (vehicleType.getVehicleTypeVersions().length > 0) {
+            vehicleType.deleteVehicleTypeVersion(
+                this.projectname,
+                vehicleType.getVehicleTypeVersions()[0],
+                this.results,
+            );
+        }
+
+        //delete vt in database
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(`DELETE FROM ${this.projectname}.vehicletypes WHERE title = '${vehicleType.getTitle()}';`)
+            .then(() => {
+                //only if db query successful delete vehicletype from array
+                this.vehicleTypes = this.vehicleTypes.filter((vt) => {
+                    return vt !== vehicleType;
+                });
+            })
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
+    }
+
+    public getResults(): Result[] {
+        return this.results;
+    }
+
+    public async addResult(
+        timing: Date,
+        garbageScenarioVersion: GarbageScenarioVersion,
+        collectionPointScenarioVersion: CollectionPointScenarioVersion,
+        vehicleTypeVersions: VehicleTypeVersion[],
+        model: string,
+        maxWalkingDistance: number,
+        totalTime: number,
+    ): Promise<Result> {
+        const result: Result = await Result.createResult(
+            this.projectname,
+            timing,
+            garbageScenarioVersion,
+            collectionPointScenarioVersion,
+            vehicleTypeVersions,
+            model,
+            maxWalkingDistance,
+            totalTime,
+        );
+
+        this.results.push(result);
+
+        return result;
+    }
+
+    public async deleteResult(result: Result): Promise<void> {
+        //delete result in database
+        const timingToString = `${result.getTiming().getFullYear()}-${
+            result.getTiming().getMonth() + 1
+        }-${result
+            .getTiming()
+            .getDate()} ${result
+            .getTiming()
+            .getHours()}:${result
+            .getTiming()
+            .getMinutes()}:${result.getTiming().getSeconds()}.${result.getTiming().getMilliseconds()}`;
+
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `DELETE FROM ${this.projectname}.results WHERE timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS');`,
+            )
+            .then(() => {
+                //only if db query successful delete result from array
+                this.results = this.results.filter((res) => {
+                    return res !== result;
+                });
+            })
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
     }
 
     public async setProjectName(projectname: string): Promise<void> {
@@ -219,6 +408,10 @@ export class Project {
             .catch((err: Error) => {
                 Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
             });
+    }
+
+    public setModifiedBy(userOrUndefined: User | undefined): void {
+        this.modifiedBy = userOrUndefined;
     }
 
     //if project - user connection is already established in database (e.g. when reading the database)

@@ -87,3 +87,14 @@ test('Get Graph object works properly', async () => {
     expect(graph.getNodes().sort()).toEqual(nodes.sort());
     expect(graph.getArcs().sort()).toEqual(arcs.sort());
 });
+
+test('createGraph works properly', async () => {
+    const nodes: MapNode[] = await MapNode.getNodesObjects('fribourg');
+    const arcs: MapArc[] = await MapArc.getArcsObjects('fribourg', nodes);
+
+    const graph: Graph = Graph.createGraph(nodes, arcs);
+
+    //test if node object is fine
+    expect(graph.getNodes()).toEqual(nodes);
+    expect(graph.getArcs()).toEqual(arcs);
+});

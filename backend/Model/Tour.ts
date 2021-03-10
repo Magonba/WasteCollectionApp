@@ -3,13 +3,13 @@ import { Logger } from '../Logger/Logger';
 import { MapNode } from './MapNode';
 
 export class Tour {
-    private id: number;
+    private timing: Date;
     private tourtime: number;
     private tourwaste: number;
     private tourNodes: [MapNode, number, number][]; //[[node1, wasteCollected1, ordering1],...]
 
-    private constructor(id: number, tourtime: number, tourwaste: number, tourNodes: [MapNode, number, number][]) {
-        this.id = id;
+    private constructor(timing: Date, tourtime: number, tourwaste: number, tourNodes: [MapNode, number, number][]) {
+        this.timing = timing;
         this.tourtime = tourtime;
         this.tourwaste = tourwaste;
         this.tourNodes = tourNodes;
@@ -17,29 +17,45 @@ export class Tour {
 
     public static async createTour(
         projectname: string,
-        id: number,
+        timing: Date,
         timingResult: Date,
         tourtime: number,
         tourwaste: number,
         tourNodes: [MapNode, number, number][],
     ): Promise<Tour> {
+        const timingToString = `${timing.getFullYear()}-${
+            timing.getMonth() + 1
+        }-${timing.getDate()} ${timing.getHours()}:${timing.getMinutes()}:${timing.getSeconds()}.${timing.getMilliseconds()}`;
+
         const timingResultToString = `${timingResult.getFullYear()}-${
             timingResult.getMonth() + 1
         }-${timingResult.getDate()} ${timingResult.getHours()}:${timingResult.getMinutes()}:${timingResult.getSeconds()}.${timingResult.getMilliseconds()}`;
 
-        await (await DatabaseHandler.getDatabaseHandler()).querying(
-            `INSERT INTO ${projectname}.tours VALUES (${id}, TO_TIMESTAMP('${timingResultToString}', 'YYYY-MM-DD HH:MI:SS.MS'), ${tourtime}, ${tourwaste});`,
-        );
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `INSERT INTO ${projectname}.tours VALUES (TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), TO_TIMESTAMP('${timingResultToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), ${tourtime}, ${tourwaste});`,
+            )
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
 
         for (let index = 0; index < tourNodes.length; index = index + 1) {
-            await (await DatabaseHandler.getDatabaseHandler()).querying(
-                `INSERT INTO ${projectname}.tour_nodes VALUES (${tourNodes[index][0].getNodeID()}, ${id}, ${
-                    tourNodes[index][1]
-                }, ${tourNodes[index][2]});`,
-            );
+            await (await DatabaseHandler.getDatabaseHandler())
+                .querying(
+                    `INSERT INTO ${projectname}.tour_nodes VALUES (${tourNodes[
+                        index
+                    ][0].getNodeID()}, TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), ${
+                        tourNodes[index][1]
+                    }, ${tourNodes[index][2]});`,
+                )
+                .catch((err: Error) => {
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                    throw err;
+                });
         }
 
-        return new Tour(id, tourtime, tourwaste, tourNodes);
+        return new Tour(timing, tourtime, tourwaste, tourNodes);
     }
 
     public static async getToursObjects(projectname: string, resultTiming: Date, nodes: MapNode[]): Promise<Tour[]> {
@@ -52,26 +68,32 @@ export class Tour {
         const toursFromDB: Record<string, string | number | boolean | Date>[] = await (
             await DatabaseHandler.getDatabaseHandler()
         ).querying(
-            `SELECT * FROM ${projectname}.tours WHERE timingresult = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
+            `SELECT * FROM ${projectname}.tours WHERE timingresult = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
         );
 
         //create tours variable
         const tours: Tour[] = [];
 
         //then for each tourFromDB create tourNodes by
-        //querying tour_nodes (by tourid) and assign each row to a new tour-nodes variable
+        //querying tour_nodes (by tourtiming) and assign each row to a new tour-nodes variable
         for (let index = 0; index < toursFromDB.length; index = index + 1) {
             const tourFromDB: Record<string, string | number | boolean | Date> = toursFromDB[index];
 
             if (
-                typeof tourFromDB.id === 'number' &&
+                tourFromDB.timing instanceof Date &&
                 tourFromDB.timingresult instanceof Date &&
                 typeof tourFromDB.tourtime === 'number' &&
                 typeof tourFromDB.tourwaste === 'number'
             ) {
+                const timingTourToString = `${tourFromDB.timing.getFullYear()}-${
+                    tourFromDB.timing.getMonth() + 1
+                }-${tourFromDB.timing.getDate()} ${tourFromDB.timing.getHours()}:${tourFromDB.timing.getMinutes()}:${tourFromDB.timing.getSeconds()}.${tourFromDB.timing.getMilliseconds()}`;
+
                 const tourNodesFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
-                ).querying(`SELECT * FROM ${projectname}.tour_nodes WHERE tourid = ${tourFromDB.id}`);
+                ).querying(
+                    `SELECT * FROM ${projectname}.tour_nodes WHERE tourtiming = TO_TIMESTAMP('${timingTourToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
+                );
 
                 //create empty tourNodes variable and fill it up later
                 const tourNodes: [MapNode, number, number][] = [];
@@ -81,7 +103,7 @@ export class Tour {
 
                     if (
                         typeof tourNodeFromDB.nodeid === 'number' &&
-                        typeof tourNodeFromDB.tourid === 'number' &&
+                        tourNodeFromDB.tourtiming instanceof Date &&
                         typeof tourNodeFromDB.wastecollected === 'number' &&
                         typeof tourNodeFromDB.ordering === 'number'
                     ) {
@@ -105,20 +127,20 @@ export class Tour {
                         tourNodes.push(tourNode);
                     } else {
                         const err: Error = new Error(
-                            'One of the properties (nodeid, tourid, wastecollected, ordering) do not have the correct type!',
+                            'One of the properties (nodeid, tourtiming, wastecollected, ordering) do not have the correct type!',
                         );
                         Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                         throw err;
                     }
                 }
                 //create Tour object
-                const tour: Tour = new Tour(tourFromDB.id, tourFromDB.tourtime, tourFromDB.tourwaste, tourNodes);
+                const tour: Tour = new Tour(tourFromDB.timing, tourFromDB.tourtime, tourFromDB.tourwaste, tourNodes);
 
                 //push tour to tours array
                 tours.push(tour);
             } else {
                 const err: Error = new Error(
-                    'One of the properties (id, timingresult, tourtime, tourwaste) do not have the correct type!',
+                    'One of the properties (timing, timingresult, tourtime, tourwaste) do not have the correct type!',
                 );
                 Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
                 throw err;
@@ -127,8 +149,8 @@ export class Tour {
         return tours;
     }
 
-    public getTourID(): number {
-        return this.id;
+    public getTourTiming(): Date {
+        return this.timing;
     }
 
     public getTourTime(): number {

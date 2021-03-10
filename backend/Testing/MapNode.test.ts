@@ -101,3 +101,28 @@ test('Get Nodes objects from database works properly', async () => {
     expect(lastNode.getVehicleDepot()).toEqual(false);
     expect(lastNode.getWasteDepot()).toEqual(true);
 });
+
+test('createNode works properly', async () => {
+    const node: MapNode = await MapNode.createNode('fribourg', 5, 7687, 897, true, true);
+
+    //query the db for the new node
+    const nodesFromDB: Record<string, string | number | boolean | Date>[] = await (
+        await DatabaseHandler.getDatabaseHandler()
+    ).querying(`SELECT * FROM fribourg.nodes`);
+
+    //expect row to be in database
+    expect(nodesFromDB).toContainEqual({
+        nodeid: 5,
+        xcoordinate: 7687,
+        ycoordinate: 897,
+        vehicledepot: true,
+        wastedepot: true,
+    });
+
+    //test if node object is fine
+    expect(node.getNodeID()).toEqual(5);
+    expect(node.getXCoordinate()).toEqual(7687);
+    expect(node.getYCoordinate()).toEqual(897);
+    expect(node.getVehicleDepot()).toEqual(true);
+    expect(node.getWasteDepot()).toEqual(true);
+});

@@ -22,6 +22,25 @@ export class MapNode {
         this.wasteDepot = wasteDepot;
     }
 
+    public static async createNode(
+        projectname: string,
+        id: number,
+        xCoordinate: number,
+        yCoordinate: number,
+        vehicleDepot: boolean,
+        wasteDepot: boolean,
+    ): Promise<MapNode> {
+        const node: MapNode = new MapNode(id, xCoordinate, yCoordinate, vehicleDepot, wasteDepot);
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `INSERT INTO ${projectname}.nodes VALUES (${id}, ${xCoordinate}, ${yCoordinate}, ${vehicleDepot}, ${wasteDepot});`,
+            )
+            .catch((err: Error) => {
+                throw err;
+            });
+        return node;
+    }
+
     public static async getNodesObjects(projectname: string): Promise<MapNode[]> {
         const nodesFromDB: Record<string, string | number | boolean | Date>[] = await (
             await DatabaseHandler.getDatabaseHandler()
@@ -58,19 +77,6 @@ export class MapNode {
         }
 
         return nodes;
-    }
-
-    public static async createNode(
-        id: number,
-        xCoordinate: number,
-        yCoordinate: number,
-        vehicleDepot: boolean,
-        wasteDepot: boolean,
-    ): Promise<MapNode> {
-        //create new node
-        //by creating an object of a new node
-        //then by adding new row to database
-        throw new Error('Not implemented method');
     }
 
     public getNodeID(): number {

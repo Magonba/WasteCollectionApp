@@ -112,3 +112,76 @@ test('Get GarbageScenarioVersions objects from database works properly', async (
     expect(lastGarbageScenarioVersion.getNodesWaste()[2][0].getNodeID()).toEqual(3);
     expect(lastGarbageScenarioVersion.getNodesWaste()[2][1]).toEqual(1043);
 });
+
+test('Create GarbageScenarioVersion works properly', async () => {
+    const nodes: MapNode[] = await MapNode.getNodesObjects('fribourg');
+    nodes.sort((node1, node2) => {
+        if (node1.getNodeID() > node2.getNodeID()) return 1;
+        if (node1.getNodeID() < node2.getNodeID()) return -1;
+        return 0;
+    });
+
+    const date: Date = new Date(2010, 5, 9, 13, 9, 34);
+
+    const nodesWaste: [MapNode, number][] = [
+        [nodes[0], 687],
+        [nodes[1], 456],
+        [nodes[2], 569],
+    ];
+
+    const garbageScenarioVersion: GarbageScenarioVersion = await GarbageScenarioVersion.createGarbageScenarioVersion(
+        'fribourg',
+        'Summer',
+        date,
+        nodesWaste,
+    );
+
+    //query the db for the new gsv
+    const gsvsFromDB: Record<string, string | number | boolean | Date>[] = await (
+        await DatabaseHandler.getDatabaseHandler()
+    ).querying(`SELECT * FROM fribourg.garbagescenarioversions`);
+
+    //expect row to be in database
+    expect(gsvsFromDB).toContainEqual({
+        title: 'Summer',
+        timing: date,
+    });
+
+    const timingToString = `${date.getFullYear()}-${
+        date.getMonth() + 1
+    }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}.${date.getMilliseconds()}`;
+
+    const gsvnodesFromDB: Record<string, string | number | boolean | Date>[] = await (
+        await DatabaseHandler.getDatabaseHandler()
+    ).querying(
+        `SELECT * FROM fribourg.garbagescenarioversions_nodes_waste WHERE title = 'Summer' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
+    );
+
+    expect(gsvnodesFromDB).toContainEqual({
+        nodeid: 1,
+        title: 'Summer',
+        timing: date,
+        wasteamount: 687,
+    });
+    expect(gsvnodesFromDB).toContainEqual({
+        nodeid: 2,
+        title: 'Summer',
+        timing: date,
+        wasteamount: 456,
+    });
+    expect(gsvnodesFromDB).toContainEqual({
+        nodeid: 3,
+        title: 'Summer',
+        timing: date,
+        wasteamount: 569,
+    });
+
+    //test if gsv object is fine
+    expect(garbageScenarioVersion.getTiming()).toEqual(date);
+    expect(garbageScenarioVersion.getNodesWaste()).toEqual([
+        [nodes[0], 687],
+        [nodes[1], 456],
+        [nodes[2], 569],
+    ]);
+    expect(garbageScenarioVersion.getGSTitle()).toEqual('Summer');
+});

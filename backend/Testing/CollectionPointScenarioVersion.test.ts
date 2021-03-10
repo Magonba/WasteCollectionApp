@@ -112,3 +112,76 @@ test('Get CollectionPointScenarioVersions objects from database works properly',
     expect(lastCollectionPointScenarioVersion.getNodesPotCP()[2][0].getNodeID()).toEqual(3);
     expect(lastCollectionPointScenarioVersion.getNodesPotCP()[2][1]).toEqual(false);
 });
+
+test('Create CollectionPointScenarioVersion works properly', async () => {
+    const nodes: MapNode[] = await MapNode.getNodesObjects('fribourg');
+    nodes.sort((node1, node2) => {
+        if (node1.getNodeID() > node2.getNodeID()) return 1;
+        if (node1.getNodeID() < node2.getNodeID()) return -1;
+        return 0;
+    });
+
+    const date: Date = new Date(2010, 5, 9, 13, 9, 34);
+
+    const nodesPotCP: [MapNode, boolean][] = [
+        [nodes[0], true],
+        [nodes[1], true],
+        [nodes[2], false],
+    ];
+
+    const collectionPointScenarioVersion: CollectionPointScenarioVersion = await CollectionPointScenarioVersion.createCollectionPointScenarioVersion(
+        'fribourg',
+        'BigContainers',
+        date,
+        nodesPotCP,
+    );
+
+    //query the db for the new cpsv
+    const cpsvsFromDB: Record<string, string | number | boolean | Date>[] = await (
+        await DatabaseHandler.getDatabaseHandler()
+    ).querying(`SELECT * FROM fribourg.collectionpointscenarioversions`);
+
+    //expect row to be in database
+    expect(cpsvsFromDB).toContainEqual({
+        title: 'BigContainers',
+        timing: date,
+    });
+
+    const timingToString = `${date.getFullYear()}-${
+        date.getMonth() + 1
+    }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}.${date.getMilliseconds()}`;
+
+    const cpsvnodesFromDB: Record<string, string | number | boolean | Date>[] = await (
+        await DatabaseHandler.getDatabaseHandler()
+    ).querying(
+        `SELECT * FROM fribourg.collectionpointscenarioversions_nodes_potcp WHERE title = 'BigContainers' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
+    );
+
+    expect(cpsvnodesFromDB).toContainEqual({
+        nodeid: 1,
+        title: 'BigContainers',
+        timing: date,
+        potentialcollectionpoint: true,
+    });
+    expect(cpsvnodesFromDB).toContainEqual({
+        nodeid: 2,
+        title: 'BigContainers',
+        timing: date,
+        potentialcollectionpoint: true,
+    });
+    expect(cpsvnodesFromDB).toContainEqual({
+        nodeid: 3,
+        title: 'BigContainers',
+        timing: date,
+        potentialcollectionpoint: false,
+    });
+
+    //test if cpsv object is fine
+    expect(collectionPointScenarioVersion.getTiming()).toEqual(date);
+    expect(collectionPointScenarioVersion.getNodesPotCP()).toEqual([
+        [nodes[0], true],
+        [nodes[1], true],
+        [nodes[2], false],
+    ]);
+    expect(collectionPointScenarioVersion.getCPSTitle()).toEqual('BigContainers');
+});

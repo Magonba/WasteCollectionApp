@@ -3,12 +3,56 @@ import { Logger } from '../Logger/Logger';
 import { MapNode } from './MapNode';
 
 export class CollectionPointScenarioVersion {
+    private cpsTitle: string;
     private timing: Date; //maybe adapt (not string)
     private nodesPotCP: [MapNode, boolean][]; //referenced MapNode and boolean potentialCollectionPoint
 
-    private constructor(timing: Date, nodesPotCP: [MapNode, boolean][]) {
+    private constructor(cpsTitle: string, timing: Date, nodesPotCP: [MapNode, boolean][]) {
+        this.cpsTitle = cpsTitle;
         this.timing = timing;
         this.nodesPotCP = nodesPotCP;
+    }
+
+    public static async createCollectionPointScenarioVersion(
+        projectname: string,
+        title: string,
+        timing: Date,
+        nodesPotCP: [MapNode, boolean][],
+    ): Promise<CollectionPointScenarioVersion> {
+        const collectionPointScenarioVersion: CollectionPointScenarioVersion = new CollectionPointScenarioVersion(
+            title,
+            timing,
+            nodesPotCP,
+        );
+
+        const timingToString = `${timing.getFullYear()}-${
+            timing.getMonth() + 1
+        }-${timing.getDate()} ${timing.getHours()}:${timing.getMinutes()}:${timing.getSeconds()}.${timing.getMilliseconds()}`;
+
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `INSERT INTO ${projectname}.collectionpointscenarioversions VALUES ('${title}', TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'));`,
+            )
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
+
+        for (let index = 0; index < nodesPotCP.length; index = index + 1) {
+            await (await DatabaseHandler.getDatabaseHandler())
+                .querying(
+                    `INSERT INTO ${projectname}.collectionpointscenarioversions_nodes_potcp VALUES (${nodesPotCP[
+                        index
+                    ][0].getNodeID()}, '${title}', TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), ${
+                        nodesPotCP[index][1]
+                    });`,
+                )
+                .catch((err: Error) => {
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                    throw err;
+                });
+        }
+        return collectionPointScenarioVersion;
     }
 
     public static async getCollectionPointScenarioVersionsObjects(
@@ -39,7 +83,7 @@ export class CollectionPointScenarioVersion {
                 const nodesPotCPFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
                 ).querying(
-                    `SELECT * FROM ${projectname}.collectionpointscenarioversions_nodes_potcp WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
+                    `SELECT * FROM ${projectname}.collectionpointscenarioversions_nodes_potcp WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
                 );
 
                 //then initialize nodesPotCP array variable correctly
@@ -80,6 +124,7 @@ export class CollectionPointScenarioVersion {
 
                 //then create CollectionPointScenarioVersion object
                 const collectionPointScenarioVersion: CollectionPointScenarioVersion = new CollectionPointScenarioVersion(
+                    title,
                     collPointScenVersionFromDB.timing,
                     nodesPotCP,
                 );
@@ -93,6 +138,15 @@ export class CollectionPointScenarioVersion {
             }
         }
         return collectionPointScenarioVersions;
+    }
+
+    public getCPSTitle(): string {
+        return this.cpsTitle;
+    }
+
+    //should only be called from CollectionPointScenario (when setting the title)
+    public setCPSTitle(cpsTitle: string): void {
+        this.cpsTitle = cpsTitle;
     }
 
     public getTiming(): Date {

@@ -1,0 +1,17 @@
+\c wastecollectiondata;
+DROP TABLE IF EXISTS zurich.tour_nodes;
+DROP TABLE IF EXISTS zurich.tours;
+DROP TABLE IF EXISTS zurich.resultsvehicles;
+DROP TABLE IF EXISTS zurich.results;
+DROP TABLE IF EXISTS zurich.vehicletypeversions_nodes_activatedarcs;
+DROP TABLE IF EXISTS zurich.vehicletypeversions;
+DROP TABLE IF EXISTS zurich.vehicletypes;
+DROP TABLE IF EXISTS zurich.collectionpointscenarioversions_nodes_potcp;
+DROP TABLE IF EXISTS zurich.collectionpointscenarioversions;
+DROP TABLE IF EXISTS zurich.collectionpointscenarios;
+DROP TABLE IF EXISTS zurich.garbagescenarioversions_nodes_waste;
+DROP TABLE IF EXISTS zurich.garbagescenarioversions;
+DROP TABLE IF EXISTS zurich.garbagescenarios;
+DROP TABLE IF EXISTS zurich.arcs;
+DROP TABLE IF EXISTS zurich.nodes;
+DROP SCHEMA IF EXISTS zurich;

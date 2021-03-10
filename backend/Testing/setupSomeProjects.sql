@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS usersprojects.projects (
 CREATE TABLE IF NOT EXISTS usersprojects.userprojects (
   userid varchar(255) NOT NULL,
   projectid varchar(255) NOT NULL,
-  CONSTRAINT fk_user FOREIGN KEY(userid) REFERENCES usersprojects.users(email) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_project FOREIGN KEY(projectid) REFERENCES usersprojects.projects(projectname) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_user FOREIGN KEY(userid) REFERENCES usersprojects.users(email) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_project FOREIGN KEY(projectid) REFERENCES usersprojects.projects(projectname) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(userid, projectid)
 );
 --for Model testing (in order to test if database reading works properly)
@@ -51,8 +51,8 @@ CREATE TABLE IF NOT EXISTS fribourg.arcs (
   sourcenodeid INT NOT NULL,
   destinationnodeid INT NOT NULL,
   distance INT NOT NULL,
-  CONSTRAINT fk_sourcenode FOREIGN KEY(sourcenodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_destinationnode FOREIGN KEY(destinationnodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_sourcenode FOREIGN KEY(sourcenodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_destinationnode FOREIGN KEY(destinationnodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(sourcenodeid, destinationnodeid)
 );
 CREATE TABLE IF NOT EXISTS fribourg.garbagescenarios (
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS fribourg.garbagescenarios (
 CREATE TABLE IF NOT EXISTS fribourg.garbagescenarioversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
-  CONSTRAINT fk_garbagescenario FOREIGN KEY(title) REFERENCES fribourg.garbagescenarios(title) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_garbagescenario FOREIGN KEY(title) REFERENCES fribourg.garbagescenarios(title) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(title, timing)
 );
 CREATE TABLE IF NOT EXISTS fribourg.garbagescenarioversions_nodes_waste (
@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS fribourg.garbagescenarioversions_nodes_waste (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   wasteamount INT NOT NULL,
-  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_garbagescenario FOREIGN KEY(title, timing) REFERENCES fribourg.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_garbagescenario FOREIGN KEY(title, timing) REFERENCES fribourg.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(nodeid, title, timing)
 );
 CREATE TABLE IF NOT EXISTS fribourg.collectionpointscenarios (
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS fribourg.collectionpointscenarios (
 CREATE TABLE IF NOT EXISTS fribourg.collectionpointscenarioversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
-  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title) REFERENCES fribourg.collectionpointscenarios(title) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title) REFERENCES fribourg.collectionpointscenarios(title) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(title, timing)
 );
 CREATE TABLE IF NOT EXISTS fribourg.collectionpointscenarioversions_nodes_potcp (
@@ -89,8 +89,8 @@ CREATE TABLE IF NOT EXISTS fribourg.collectionpointscenarioversions_nodes_potcp 
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   potentialcollectionpoint BOOLEAN NOT NULL,
-  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title, timing) REFERENCES fribourg.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title, timing) REFERENCES fribourg.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(nodeid, title, timing)
 );
 CREATE TABLE IF NOT EXISTS fribourg.vehicletypes (
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS fribourg.vehicletypes (
 CREATE TABLE IF NOT EXISTS fribourg.vehicletypeversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
-  CONSTRAINT fk_vehicletype FOREIGN KEY(title) REFERENCES fribourg.vehicletypes(title) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_vehicletype FOREIGN KEY(title) REFERENCES fribourg.vehicletypes(title) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(title, timing)
 );
 CREATE TABLE IF NOT EXISTS fribourg.vehicletypeversions_nodes_activatedarcs (
@@ -112,8 +112,8 @@ CREATE TABLE IF NOT EXISTS fribourg.vehicletypeversions_nodes_activatedarcs (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   activated BOOLEAN NOT NULL,
-  CONSTRAINT fk_arc FOREIGN KEY(sourcenodeid, destinationnodeid) REFERENCES fribourg.arcs(sourcenodeid, destinationnodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_vehicletype FOREIGN KEY(title, timing) REFERENCES fribourg.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_arc FOREIGN KEY(sourcenodeid, destinationnodeid) REFERENCES fribourg.arcs(sourcenodeid, destinationnodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_vehicletype FOREIGN KEY(title, timing) REFERENCES fribourg.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(sourcenodeid, destinationnodeid, title, timing)
 );
 CREATE TABLE IF NOT EXISTS fribourg.results (
@@ -125,34 +125,34 @@ CREATE TABLE IF NOT EXISTS fribourg.results (
   model varchar(3) NOT NULL,
   maxwalkingdistance INT NOT NULL,
   totaltime INT NOT NULL,
-  CONSTRAINT fk_garbagescenario FOREIGN KEY(titlegarbsc, timinggarbsc) REFERENCES fribourg.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(titlecpsc, timingcpsc) REFERENCES fribourg.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_garbagescenario FOREIGN KEY(titlegarbsc, timinggarbsc) REFERENCES fribourg.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(titlecpsc, timingcpsc) REFERENCES fribourg.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(timing)
 );
 CREATE TABLE IF NOT EXISTS fribourg.resultsvehicles (
   timingresult TIMESTAMP NOT NULL,
   titlevehicletype varchar(255) NOT NULL,
   timingvehicletype TIMESTAMP NOT NULL,
-  CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES fribourg.results(timing) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_vehicletype FOREIGN KEY(titlevehicletype, timingvehicletype) REFERENCES fribourg.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES fribourg.results(timing) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_vehicletype FOREIGN KEY(titlevehicletype, timingvehicletype) REFERENCES fribourg.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(timingresult, titlevehicletype, timingvehicletype)
 );
 CREATE TABLE IF NOT EXISTS fribourg.tours (
-  id INT NOT NULL,
+  timing TIMESTAMP NOT NULL,
   timingresult TIMESTAMP NOT NULL,
   tourtime INT NOT NULL,
   tourwaste INT NOT NULL,
-  CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES fribourg.results(timing) ON UPDATE CASCADE ON DELETE NO ACTION,
-  PRIMARY KEY(id)
+  CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES fribourg.results(timing) ON UPDATE CASCADE ON DELETE CASCADE,
+  PRIMARY KEY(timing)
 );
 CREATE TABLE IF NOT EXISTS fribourg.tour_nodes (
   nodeid INT NOT NULL,
-  tourid INT NOT NULL,
+  tourtiming TIMESTAMP NOT NULL,
   wastecollected INT NOT NULL,
   ordering INT NOT NULL, --first, second, third, etc. node in the tour
-  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_tour FOREIGN KEY(tourid) REFERENCES fribourg.tours(id) ON UPDATE CASCADE ON DELETE NO ACTION,
-  PRIMARY KEY(nodeid, tourid)
+  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES fribourg.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_tour FOREIGN KEY(tourtiming) REFERENCES fribourg.tours(timing) ON UPDATE CASCADE ON DELETE CASCADE,
+  PRIMARY KEY(nodeid, tourtiming)
 );
 
 --Bern project
@@ -169,8 +169,8 @@ CREATE TABLE IF NOT EXISTS Bern.arcs (
   sourcenodeid INT NOT NULL,
   destinationnodeid INT NOT NULL,
   distance INT NOT NULL,
-  CONSTRAINT fk_sourcenode FOREIGN KEY(sourcenodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_destinationnode FOREIGN KEY(destinationnodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_sourcenode FOREIGN KEY(sourcenodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_destinationnode FOREIGN KEY(destinationnodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(sourcenodeid, destinationnodeid)
 );
 CREATE TABLE IF NOT EXISTS Bern.garbagescenarios (
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS Bern.garbagescenarios (
 CREATE TABLE IF NOT EXISTS Bern.garbagescenarioversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
-  CONSTRAINT fk_garbagescenario FOREIGN KEY(title) REFERENCES Bern.garbagescenarios(title) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_garbagescenario FOREIGN KEY(title) REFERENCES Bern.garbagescenarios(title) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(title, timing)
 );
 CREATE TABLE IF NOT EXISTS Bern.garbagescenarioversions_nodes_waste (
@@ -188,8 +188,8 @@ CREATE TABLE IF NOT EXISTS Bern.garbagescenarioversions_nodes_waste (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   wasteamount INT NOT NULL,
-  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_garbagescenario FOREIGN KEY(title, timing) REFERENCES Bern.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_garbagescenario FOREIGN KEY(title, timing) REFERENCES Bern.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(nodeid, title, timing)
 );
 CREATE TABLE IF NOT EXISTS Bern.collectionpointscenarios (
@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS Bern.collectionpointscenarios (
 CREATE TABLE IF NOT EXISTS Bern.collectionpointscenarioversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
-  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title) REFERENCES Bern.collectionpointscenarios(title) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title) REFERENCES Bern.collectionpointscenarios(title) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(title, timing)
 );
 CREATE TABLE IF NOT EXISTS Bern.collectionpointscenarioversions_nodes_potcp (
@@ -207,8 +207,8 @@ CREATE TABLE IF NOT EXISTS Bern.collectionpointscenarioversions_nodes_potcp (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   potentialcollectionpoint BOOLEAN NOT NULL,
-  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title, timing) REFERENCES Bern.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(title, timing) REFERENCES Bern.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(nodeid, title, timing)
 );
 CREATE TABLE IF NOT EXISTS Bern.vehicletypes (
@@ -221,7 +221,7 @@ CREATE TABLE IF NOT EXISTS Bern.vehicletypes (
 CREATE TABLE IF NOT EXISTS Bern.vehicletypeversions (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
-  CONSTRAINT fk_vehicletype FOREIGN KEY(title) REFERENCES Bern.vehicletypes(title) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_vehicletype FOREIGN KEY(title) REFERENCES Bern.vehicletypes(title) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(title, timing)
 );
 CREATE TABLE IF NOT EXISTS Bern.vehicletypeversions_nodes_activatedarcs (
@@ -230,8 +230,8 @@ CREATE TABLE IF NOT EXISTS Bern.vehicletypeversions_nodes_activatedarcs (
   title varchar(255) NOT NULL,
   timing TIMESTAMP NOT NULL,
   activated BOOLEAN NOT NULL,
-  CONSTRAINT fk_arc FOREIGN KEY(sourcenodeid, destinationnodeid) REFERENCES Bern.arcs(sourcenodeid, destinationnodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_vehicletype FOREIGN KEY(title, timing) REFERENCES Bern.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_arc FOREIGN KEY(sourcenodeid, destinationnodeid) REFERENCES Bern.arcs(sourcenodeid, destinationnodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_vehicletype FOREIGN KEY(title, timing) REFERENCES Bern.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(sourcenodeid, destinationnodeid, title, timing)
 );
 CREATE TABLE IF NOT EXISTS Bern.results (
@@ -243,34 +243,34 @@ CREATE TABLE IF NOT EXISTS Bern.results (
   model varchar(3) NOT NULL,
   maxwalkingdistance INT NOT NULL,
   totaltime INT NOT NULL,
-  CONSTRAINT fk_garbagescenario FOREIGN KEY(titlegarbsc, timinggarbsc) REFERENCES Bern.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(titlecpsc, timingcpsc) REFERENCES Bern.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_garbagescenario FOREIGN KEY(titlegarbsc, timinggarbsc) REFERENCES Bern.garbagescenarioversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_collectionpointscenario FOREIGN KEY(titlecpsc, timingcpsc) REFERENCES Bern.collectionpointscenarioversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(timing)
 );
 CREATE TABLE IF NOT EXISTS Bern.resultsvehicles (
   timingresult TIMESTAMP NOT NULL,
   titlevehicletype varchar(255) NOT NULL,
   timingvehicletype TIMESTAMP NOT NULL,
-  CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES Bern.results(timing) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_vehicletype FOREIGN KEY(titlevehicletype, timingvehicletype) REFERENCES Bern.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES Bern.results(timing) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_vehicletype FOREIGN KEY(titlevehicletype, timingvehicletype) REFERENCES Bern.vehicletypeversions(title, timing) ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(timingresult, titlevehicletype, timingvehicletype)
 );
 CREATE TABLE IF NOT EXISTS Bern.tours (
-  id INT NOT NULL,
+  timing TIMESTAMP NOT NULL,
   timingresult TIMESTAMP NOT NULL,
   tourtime INT NOT NULL,
   tourwaste INT NOT NULL,
-  CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES Bern.results(timing) ON UPDATE CASCADE ON DELETE NO ACTION,
-  PRIMARY KEY(id)
+  CONSTRAINT fk_result FOREIGN KEY(timingresult) REFERENCES Bern.results(timing) ON UPDATE CASCADE ON DELETE CASCADE,
+  PRIMARY KEY(timing)
 );
 CREATE TABLE IF NOT EXISTS Bern.tour_nodes (
   nodeid INT NOT NULL,
-  tourid INT NOT NULL,
+  tourtiming TIMESTAMP NOT NULL,
   wastecollected INT NOT NULL,
   ordering INT NOT NULL, --first, second, third, etc. node in the tour
-  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE NO ACTION,
-  CONSTRAINT fk_tour FOREIGN KEY(tourid) REFERENCES Bern.tours(id) ON UPDATE CASCADE ON DELETE NO ACTION,
-  PRIMARY KEY(nodeid, tourid)
+  CONSTRAINT fk_node FOREIGN KEY(nodeid) REFERENCES Bern.nodes(nodeid) ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_tour FOREIGN KEY(tourtiming) REFERENCES Bern.tours(timing) ON UPDATE CASCADE ON DELETE CASCADE,
+  PRIMARY KEY(nodeid, tourtiming)
 );
 
 --fifth fill up the project schemas tables with some random date
@@ -364,21 +364,21 @@ INSERT INTO fribourg.resultsvehicles VALUES (TO_TIMESTAMP('2008-06-11 3:25:11', 
 INSERT INTO fribourg.resultsvehicles VALUES (TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 'Volkswagen3.5t', TO_TIMESTAMP('2009-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'));
 INSERT INTO fribourg.resultsvehicles VALUES (TO_TIMESTAMP('2007-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 'Man20t', TO_TIMESTAMP('2011-05-21 10:45:30', 'YYYY-MM-DD HH:MI:SS'));
 
-INSERT INTO fribourg.tours VALUES (1, TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 123, 874);
-INSERT INTO fribourg.tours VALUES (2, TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 543, 1093);
-INSERT INTO fribourg.tours VALUES (3, TO_TIMESTAMP('2007-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 732, 9874);
+INSERT INTO fribourg.tours VALUES (TO_TIMESTAMP('2010-01-7 11:23:9', 'YYYY-MM-DD HH:MI:SS'), TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 123, 874);
+INSERT INTO fribourg.tours VALUES (TO_TIMESTAMP('2006-04-10 2:15:23', 'YYYY-MM-DD HH:MI:SS'), TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 543, 1093);
+INSERT INTO fribourg.tours VALUES (TO_TIMESTAMP('2001-08-11 1:18:39', 'YYYY-MM-DD HH:MI:SS'), TO_TIMESTAMP('2007-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 732, 9874);
 
-INSERT INTO fribourg.tour_nodes VALUES (1, 1, 209, 1);
-INSERT INTO fribourg.tour_nodes VALUES (2, 1, 190, 2);
-INSERT INTO fribourg.tour_nodes VALUES (3, 1, 409, 3);
+INSERT INTO fribourg.tour_nodes VALUES (1, TO_TIMESTAMP('2010-01-7 11:23:9', 'YYYY-MM-DD HH:MI:SS'), 209, 1);
+INSERT INTO fribourg.tour_nodes VALUES (2, TO_TIMESTAMP('2010-01-7 11:23:9', 'YYYY-MM-DD HH:MI:SS'), 190, 2);
+INSERT INTO fribourg.tour_nodes VALUES (3, TO_TIMESTAMP('2010-01-7 11:23:9', 'YYYY-MM-DD HH:MI:SS'), 409, 3);
 
-INSERT INTO fribourg.tour_nodes VALUES (1, 2, 323, 3);
-INSERT INTO fribourg.tour_nodes VALUES (2, 2, 376, 2);
-INSERT INTO fribourg.tour_nodes VALUES (3, 2, 312, 1);
+INSERT INTO fribourg.tour_nodes VALUES (1, TO_TIMESTAMP('2006-04-10 2:15:23', 'YYYY-MM-DD HH:MI:SS'), 323, 3);
+INSERT INTO fribourg.tour_nodes VALUES (2, TO_TIMESTAMP('2006-04-10 2:15:23', 'YYYY-MM-DD HH:MI:SS'), 376, 2);
+INSERT INTO fribourg.tour_nodes VALUES (3, TO_TIMESTAMP('2006-04-10 2:15:23', 'YYYY-MM-DD HH:MI:SS'), 312, 1);
 
-INSERT INTO fribourg.tour_nodes VALUES (1, 3, 367, 3);
-INSERT INTO fribourg.tour_nodes VALUES (2, 3, 309, 1);
-INSERT INTO fribourg.tour_nodes VALUES (3, 3, 412, 2);
+INSERT INTO fribourg.tour_nodes VALUES (1, TO_TIMESTAMP('2001-08-11 1:18:39', 'YYYY-MM-DD HH:MI:SS'), 367, 3);
+INSERT INTO fribourg.tour_nodes VALUES (2, TO_TIMESTAMP('2001-08-11 1:18:39', 'YYYY-MM-DD HH:MI:SS'), 309, 1);
+INSERT INTO fribourg.tour_nodes VALUES (3, TO_TIMESTAMP('2001-08-11 1:18:39', 'YYYY-MM-DD HH:MI:SS'), 412, 2);
 
 --Bern project (same as fribourg because lazy)
 INSERT INTO Bern.nodes VALUES (1, 123, 23, TRUE, FALSE);
@@ -470,18 +470,18 @@ INSERT INTO Bern.resultsvehicles VALUES (TO_TIMESTAMP('2008-06-11 3:25:11', 'YYY
 INSERT INTO Bern.resultsvehicles VALUES (TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 'Volkswagen3.5t', TO_TIMESTAMP('2009-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'));
 INSERT INTO Bern.resultsvehicles VALUES (TO_TIMESTAMP('2007-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 'Man20t', TO_TIMESTAMP('2011-05-21 10:45:30', 'YYYY-MM-DD HH:MI:SS'));
 
-INSERT INTO Bern.tours VALUES (1, TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 123, 874);
-INSERT INTO Bern.tours VALUES (2, TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 543, 1093);
-INSERT INTO Bern.tours VALUES (3, TO_TIMESTAMP('2007-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 732, 9874);
+INSERT INTO Bern.tours VALUES (TO_TIMESTAMP('2010-01-7 11:23:9', 'YYYY-MM-DD HH:MI:SS'), TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 123, 874);
+INSERT INTO Bern.tours VALUES (TO_TIMESTAMP('2006-04-10 2:15:23', 'YYYY-MM-DD HH:MI:SS'), TO_TIMESTAMP('2008-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 543, 1093);
+INSERT INTO Bern.tours VALUES (TO_TIMESTAMP('2001-08-11 1:18:39', 'YYYY-MM-DD HH:MI:SS'), TO_TIMESTAMP('2007-06-11 3:25:11', 'YYYY-MM-DD HH:MI:SS'), 732, 9874);
 
-INSERT INTO Bern.tour_nodes VALUES (1, 1, 209, 1);
-INSERT INTO Bern.tour_nodes VALUES (2, 1, 190, 2);
-INSERT INTO Bern.tour_nodes VALUES (3, 1, 409, 3);
+INSERT INTO Bern.tour_nodes VALUES (1, TO_TIMESTAMP('2010-01-7 11:23:9', 'YYYY-MM-DD HH:MI:SS'), 209, 1);
+INSERT INTO Bern.tour_nodes VALUES (2, TO_TIMESTAMP('2010-01-7 11:23:9', 'YYYY-MM-DD HH:MI:SS'), 190, 2);
+INSERT INTO Bern.tour_nodes VALUES (3, TO_TIMESTAMP('2010-01-7 11:23:9', 'YYYY-MM-DD HH:MI:SS'), 409, 3);
 
-INSERT INTO Bern.tour_nodes VALUES (1, 2, 323, 3);
-INSERT INTO Bern.tour_nodes VALUES (2, 2, 376, 2);
-INSERT INTO Bern.tour_nodes VALUES (3, 2, 312, 1);
+INSERT INTO Bern.tour_nodes VALUES (1, TO_TIMESTAMP('2006-04-10 2:15:23', 'YYYY-MM-DD HH:MI:SS'), 323, 3);
+INSERT INTO Bern.tour_nodes VALUES (2, TO_TIMESTAMP('2006-04-10 2:15:23', 'YYYY-MM-DD HH:MI:SS'), 376, 2);
+INSERT INTO Bern.tour_nodes VALUES (3, TO_TIMESTAMP('2006-04-10 2:15:23', 'YYYY-MM-DD HH:MI:SS'), 312, 1);
 
-INSERT INTO Bern.tour_nodes VALUES (1, 3, 367, 3);
-INSERT INTO Bern.tour_nodes VALUES (2, 3, 309, 1);
-INSERT INTO Bern.tour_nodes VALUES (3, 3, 412, 2);
+INSERT INTO Bern.tour_nodes VALUES (1, TO_TIMESTAMP('2001-08-11 1:18:39', 'YYYY-MM-DD HH:MI:SS'), 367, 3);
+INSERT INTO Bern.tour_nodes VALUES (2, TO_TIMESTAMP('2001-08-11 1:18:39', 'YYYY-MM-DD HH:MI:SS'), 309, 1);
+INSERT INTO Bern.tour_nodes VALUES (3, TO_TIMESTAMP('2001-08-11 1:18:39', 'YYYY-MM-DD HH:MI:SS'), 412, 2);

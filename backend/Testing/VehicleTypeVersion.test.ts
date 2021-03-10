@@ -119,3 +119,85 @@ test('Get VehicleTypeVersions objects from database works properly', async () =>
     expect(lastVehicleTypeVersion.getArcsActivated()[2][0].getDestinationNode().getNodeID()).toEqual(4);
     expect(lastVehicleTypeVersion.getArcsActivated()[2][1]).toEqual(false);
 });
+
+test('Create VehicleTypeVersion works properly', async () => {
+    const nodes: MapNode[] = await MapNode.getNodesObjects('fribourg');
+    nodes.sort((node1, node2) => {
+        if (node1.getNodeID() > node2.getNodeID()) return 1;
+        if (node1.getNodeID() < node2.getNodeID()) return -1;
+        return 0;
+    });
+    const arcs: MapArc[] = await MapArc.getArcsObjects('fribourg', nodes);
+    arcs.sort((arc1, arc2) => {
+        if (arc1.getSourceNode().getNodeID() > arc2.getSourceNode().getNodeID()) return 1;
+        if (arc1.getSourceNode().getNodeID() < arc2.getSourceNode().getNodeID()) return -1;
+        return 0;
+    });
+
+    const date: Date = new Date(2010, 5, 9, 13, 9, 34);
+
+    const arcsActivated: [MapArc, boolean][] = [
+        [arcs[0], true],
+        [arcs[1], false],
+        [arcs[2], true],
+    ];
+
+    const vehicleTypeVersion: VehicleTypeVersion = await VehicleTypeVersion.createVehicleTypeVersion(
+        'fribourg',
+        'Man20t',
+        date,
+        arcsActivated,
+    );
+
+    //query the db for the new gsv
+    const vtvsFromDB: Record<string, string | number | boolean | Date>[] = await (
+        await DatabaseHandler.getDatabaseHandler()
+    ).querying(`SELECT * FROM fribourg.vehicletypeversions`);
+
+    //expect row to be in database
+    expect(vtvsFromDB).toContainEqual({
+        title: 'Man20t',
+        timing: date,
+    });
+
+    const timingToString = `${date.getFullYear()}-${
+        date.getMonth() + 1
+    }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}.${date.getMilliseconds()}`;
+
+    const vtvarcsFromDB: Record<string, string | number | boolean | Date>[] = await (
+        await DatabaseHandler.getDatabaseHandler()
+    ).querying(
+        `SELECT * FROM fribourg.vehicletypeversions_nodes_activatedarcs WHERE title = 'Man20t' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
+    );
+
+    expect(vtvarcsFromDB).toContainEqual({
+        sourcenodeid: 1,
+        destinationnodeid: 2,
+        title: 'Man20t',
+        timing: date,
+        activated: true,
+    });
+    expect(vtvarcsFromDB).toContainEqual({
+        sourcenodeid: 2,
+        destinationnodeid: 3,
+        title: 'Man20t',
+        timing: date,
+        activated: false,
+    });
+    expect(vtvarcsFromDB).toContainEqual({
+        sourcenodeid: 3,
+        destinationnodeid: 4,
+        title: 'Man20t',
+        timing: date,
+        activated: true,
+    });
+
+    //test if vtv object is fine
+    expect(vehicleTypeVersion.getTiming()).toEqual(date);
+    expect(vehicleTypeVersion.getArcsActivated()).toEqual([
+        [arcs[0], true],
+        [arcs[1], false],
+        [arcs[2], true],
+    ]);
+    expect(vehicleTypeVersion.getVTTitle()).toEqual('Man20t');
+});

@@ -3,12 +3,56 @@ import { Logger } from '../Logger/Logger';
 import { MapArc } from './MapArc';
 
 export class VehicleTypeVersion {
+    private vtTitle: string;
     private timing: Date; //maybe adapt (not string)
     private arcsActivated: [MapArc, boolean][]; //referenced MapArc and boolean for activation
 
-    private constructor(timing: Date, arcsActivated: [MapArc, boolean][]) {
+    private constructor(vtTitle: string, timing: Date, arcsActivated: [MapArc, boolean][]) {
+        this.vtTitle = vtTitle;
         this.timing = timing;
         this.arcsActivated = arcsActivated;
+    }
+
+    public static async createVehicleTypeVersion(
+        projectname: string,
+        title: string,
+        timing: Date,
+        arcsActivated: [MapArc, boolean][],
+    ): Promise<VehicleTypeVersion> {
+        const vehicleTypeVersion: VehicleTypeVersion = new VehicleTypeVersion(title, timing, arcsActivated);
+
+        const timingToString = `${timing.getFullYear()}-${
+            timing.getMonth() + 1
+        }-${timing.getDate()} ${timing.getHours()}:${timing.getMinutes()}:${timing.getSeconds()}.${timing.getMilliseconds()}`;
+
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `INSERT INTO ${projectname}.vehicletypeversions VALUES ('${title}', TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'));`,
+            )
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
+
+        for (let index = 0; index < arcsActivated.length; index = index + 1) {
+            await (await DatabaseHandler.getDatabaseHandler())
+                .querying(
+                    `INSERT INTO ${projectname}.vehicletypeversions_nodes_activatedarcs VALUES (${arcsActivated[
+                        index
+                    ][0]
+                        .getSourceNode()
+                        .getNodeID()}, ${arcsActivated[index][0]
+                        .getDestinationNode()
+                        .getNodeID()}, '${title}', TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), ${
+                        arcsActivated[index][1]
+                    });`,
+                )
+                .catch((err: Error) => {
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                    throw err;
+                });
+        }
+        return vehicleTypeVersion;
     }
 
     public static async getVehicleTypeVersionsObjects(
@@ -36,7 +80,7 @@ export class VehicleTypeVersion {
                 const arcsActivatedFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
                 ).querying(
-                    `SELECT * FROM ${projectname}.vehicletypeversions_nodes_activatedarcs WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
+                    `SELECT * FROM ${projectname}.vehicletypeversions_nodes_activatedarcs WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
                 );
 
                 //then initialize arcsActivated array variable correctly
@@ -82,6 +126,7 @@ export class VehicleTypeVersion {
 
                 //then create VehicleTypeVersion object
                 const vehicleTypeVersion: VehicleTypeVersion = new VehicleTypeVersion(
+                    title,
                     vehicleTypeVersionFromDB.timing,
                     arcsActivated,
                 );
@@ -95,6 +140,15 @@ export class VehicleTypeVersion {
             }
         }
         return vehicleTypeVersions;
+    }
+
+    public getVTTitle(): string {
+        return this.vtTitle;
+    }
+
+    //should only be called from VehicleType (when setting the title)
+    public setVTTitle(vtTitle: string): void {
+        this.vtTitle = vtTitle;
     }
 
     public getTiming(): Date {

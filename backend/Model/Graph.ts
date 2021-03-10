@@ -17,8 +17,8 @@ export class Graph {
         return new Graph(nodes, arcs);
     }
 
-    public static emptyGraph(): Graph {
-        return new Graph([], []);
+    public static createGraph(nodes: MapNode[], arcs: MapArc[]): Graph {
+        return new Graph(nodes, arcs);
     }
 
     public getNodes(): MapNode[] {

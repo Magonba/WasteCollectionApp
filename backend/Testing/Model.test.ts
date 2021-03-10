@@ -3,12 +3,6 @@ import dotenv from 'dotenv';
 import { DatabaseHandler } from '../Database/DatabaseHandler';
 import { Logger } from '../Logger/Logger';
 dotenv.config(); // necessary for accessing process.env variable
-import { MapNode } from '../Model/MapNode';
-import { GarbageScenario } from '../Model/GarbageScenario';
-import { CollectionPointScenario } from '../Model/CollectionPointScenario';
-import { VehicleType } from '../Model/VehicleType';
-import { Result } from '../Model/Result';
-import { MapArc } from '../Model/MapArc';
 import { Model } from '../Model/Model';
 import { User } from '../Model/User';
 import { Project } from '../Model/Project';

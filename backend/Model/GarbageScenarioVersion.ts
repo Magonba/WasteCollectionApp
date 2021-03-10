@@ -3,12 +3,52 @@ import { Logger } from '../Logger/Logger';
 import { MapNode } from './MapNode';
 
 export class GarbageScenarioVersion {
+    private gscTitle: string;
     private timing: Date; //maybe adapt (not string)
     private nodesWaste: [MapNode, number][]; //referenced MapNode and wasteEstimation
 
-    private constructor(timing: Date, nodesWaste: [MapNode, number][]) {
+    private constructor(gscTitle: string, timing: Date, nodesWaste: [MapNode, number][]) {
+        this.gscTitle = gscTitle;
         this.timing = timing;
         this.nodesWaste = nodesWaste;
+    }
+
+    public static async createGarbageScenarioVersion(
+        projectname: string,
+        title: string,
+        timing: Date,
+        nodesWaste: [MapNode, number][],
+    ): Promise<GarbageScenarioVersion> {
+        const garbageScenarioVersion: GarbageScenarioVersion = new GarbageScenarioVersion(title, timing, nodesWaste);
+
+        const timingToString = `${timing.getFullYear()}-${
+            timing.getMonth() + 1
+        }-${timing.getDate()} ${timing.getHours()}:${timing.getMinutes()}:${timing.getSeconds()}.${timing.getMilliseconds()}`;
+
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `INSERT INTO ${projectname}.garbagescenarioversions VALUES ('${title}', TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'));`,
+            )
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
+
+        for (let index = 0; index < nodesWaste.length; index = index + 1) {
+            await (await DatabaseHandler.getDatabaseHandler())
+                .querying(
+                    `INSERT INTO ${projectname}.garbagescenarioversions_nodes_waste VALUES (${nodesWaste[
+                        index
+                    ][0].getNodeID()}, '${title}', TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), ${
+                        nodesWaste[index][1]
+                    });`,
+                )
+                .catch((err: Error) => {
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                    throw err;
+                });
+        }
+        return garbageScenarioVersion;
     }
 
     public static async getGarbageScenarioVersionsObjects(
@@ -36,7 +76,7 @@ export class GarbageScenarioVersion {
                 const nodesWasteFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
                 ).querying(
-                    `SELECT * FROM ${projectname}.garbagescenarioversions_nodes_waste WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
+                    `SELECT * FROM ${projectname}.garbagescenarioversions_nodes_waste WHERE title = '${title}' AND timing = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
                 );
 
                 //then initialize nodeswaste array variable correctly
@@ -76,6 +116,7 @@ export class GarbageScenarioVersion {
                 }
                 //then create GarbageScenarioVersion object
                 const garbageScenarioVersion: GarbageScenarioVersion = new GarbageScenarioVersion(
+                    title,
                     garbScenVersionFromDB.timing,
                     nodesWaste,
                 );
@@ -89,6 +130,15 @@ export class GarbageScenarioVersion {
             }
         }
         return garbageScenarioVersions;
+    }
+
+    public getGSTitle(): string {
+        return this.gscTitle;
+    }
+
+    //should only be called from GarbageScenario (when setting the title)
+    public setGSTitle(gscTitle: string): void {
+        this.gscTitle = gscTitle;
     }
 
     public getTiming(): Date {

@@ -18,6 +18,7 @@ export class Result {
     private maxWalkingDistance: number;
     private totalTime: number;
     private tours: Tour[];
+    private completed = false; //turns true when tours were set
 
     private constructor(
         timing: Date,
@@ -37,6 +38,90 @@ export class Result {
         this.maxWalkingDistance = maxWalkingDistance;
         this.totalTime = totalTime;
         this.tours = tours;
+    }
+
+    public static async createResult(
+        projectname: string,
+        timing: Date,
+        garbageScenarioVersion: GarbageScenarioVersion,
+        collectionPointScenarioVersion: CollectionPointScenarioVersion,
+        vehicleTypeVersions: VehicleTypeVersion[],
+        model: string,
+        maxWalkingDistance: number,
+        totalTime: number,
+    ): Promise<Result> {
+        const result: Result = new Result(
+            timing,
+            garbageScenarioVersion,
+            collectionPointScenarioVersion,
+            vehicleTypeVersions,
+            model,
+            maxWalkingDistance,
+            totalTime,
+            [],
+        );
+
+        const timingToString = `${timing.getFullYear()}-${
+            timing.getMonth() + 1
+        }-${timing.getDate()} ${timing.getHours()}:${timing.getMinutes()}:${timing.getSeconds()}.${timing.getMilliseconds()}`;
+
+        const timingGSVToString = `${garbageScenarioVersion.getTiming().getFullYear()}-${
+            garbageScenarioVersion.getTiming().getMonth() + 1
+        }-${garbageScenarioVersion
+            .getTiming()
+            .getDate()} ${garbageScenarioVersion
+            .getTiming()
+            .getHours()}:${garbageScenarioVersion
+            .getTiming()
+            .getMinutes()}:${garbageScenarioVersion
+            .getTiming()
+            .getSeconds()}.${garbageScenarioVersion.getTiming().getMilliseconds()}`;
+
+        const timingCPSVToString = `${collectionPointScenarioVersion.getTiming().getFullYear()}-${
+            collectionPointScenarioVersion.getTiming().getMonth() + 1
+        }-${collectionPointScenarioVersion
+            .getTiming()
+            .getDate()} ${collectionPointScenarioVersion
+            .getTiming()
+            .getHours()}:${collectionPointScenarioVersion
+            .getTiming()
+            .getMinutes()}:${collectionPointScenarioVersion
+            .getTiming()
+            .getSeconds()}.${collectionPointScenarioVersion.getTiming().getMilliseconds()}`;
+
+        //insert result
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `INSERT INTO ${projectname}.results VALUES (TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${garbageScenarioVersion.getGSTitle()}', TO_TIMESTAMP('${timingGSVToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${collectionPointScenarioVersion.getCPSTitle()}', TO_TIMESTAMP('${timingCPSVToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${model}', ${maxWalkingDistance}, ${totalTime});`,
+            )
+            .catch((err: Error) => {
+                Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                throw err;
+            });
+
+        //insert vehicleTypeVersions
+        for (let index = 0; index < vehicleTypeVersions.length; index = index + 1) {
+            const timingVTVToString = `${vehicleTypeVersions[index].getTiming().getFullYear()}-${
+                vehicleTypeVersions[index].getTiming().getMonth() + 1
+            }-${vehicleTypeVersions[index].getTiming().getDate()} ${vehicleTypeVersions[index]
+                .getTiming()
+                .getHours()}:${vehicleTypeVersions[index].getTiming().getMinutes()}:${vehicleTypeVersions[index]
+                .getTiming()
+                .getSeconds()}.${vehicleTypeVersions[index].getTiming().getMilliseconds()}`;
+
+            await (await DatabaseHandler.getDatabaseHandler())
+                .querying(
+                    `INSERT INTO ${projectname}.resultsvehicles VALUES (TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS'), '${vehicleTypeVersions[
+                        index
+                    ].getVTTitle()}', TO_TIMESTAMP('${timingVTVToString}', 'YYYY-MM-DD HH24:MI:SS.MS'));`,
+                )
+                .catch((err: Error) => {
+                    Logger.getLogger().fileAndConsoleLog(err.stack === undefined ? '' : err.stack, 'error');
+                    throw err;
+                });
+        }
+
+        return result;
     }
 
     public static async getResultsObjects(
@@ -135,7 +220,7 @@ export class Result {
                 const resultsVehiclesFromDB: Record<string, string | number | boolean | Date>[] = await (
                     await DatabaseHandler.getDatabaseHandler()
                 ).querying(
-                    `SELECT * FROM ${projectname}.resultsvehicles WHERE timingresult = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH:MI:SS.MS')`,
+                    `SELECT * FROM ${projectname}.resultsvehicles WHERE timingresult = TO_TIMESTAMP('${timingToString}', 'YYYY-MM-DD HH24:MI:SS.MS')`,
                 );
 
                 //create empty array with vehicleTypeVersions and then fill it up in for loop
@@ -245,5 +330,35 @@ export class Result {
 
     public getTours(): Tour[] {
         return this.tours;
+    }
+
+    //parameter toursdata is an array with
+    //timing: Date,
+    //tourtime: number,
+    //tourwaste: number,
+    //tourNodes: [MapNode, number, number][] (which has a node, wastecollected and ordering)
+    public async setTours(
+        projectname: string,
+        toursData: [Date, number, number, [MapNode, number, number][]][],
+    ): Promise<void> {
+        if (this.completed === false) {
+            for (let index = 0; index < toursData.length; index = index + 1) {
+                this.tours.push(
+                    await Tour.createTour(
+                        projectname,
+                        toursData[index][0],
+                        this.getTiming(),
+                        toursData[index][1],
+                        toursData[index][2],
+                        toursData[index][3],
+                    ),
+                );
+            }
+            this.completed = true;
+        }
+    }
+
+    public getCompleted(): boolean {
+        return this.completed;
     }
 }

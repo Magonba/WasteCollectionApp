@@ -66,10 +66,15 @@ export class MapArc {
         destinationNode: MapNode,
         distance: number,
     ): Promise<MapArc> {
-        //create new arc
-        //by creating an object of a new arc
-        //then by adding new row to database
-        throw new Error('Not implemented method');
+        const arc: MapArc = new MapArc(sourceNode, destinationNode, distance);
+        await (await DatabaseHandler.getDatabaseHandler())
+            .querying(
+                `INSERT INTO ${projectname}.arcs VALUES (${sourceNode.getNodeID()}, ${destinationNode.getNodeID()}, ${distance});`,
+            )
+            .catch((err: Error) => {
+                throw err;
+            });
+        return arc;
     }
 
     public getSourceNode(): MapNode {

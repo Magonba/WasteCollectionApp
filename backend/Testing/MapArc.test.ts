@@ -99,3 +99,31 @@ test('Get Arcs objects works properly', async () => {
     expect(lastArc.getDestinationNode().getNodeID()).toEqual(1);
     expect(lastArc.getDistance()).toEqual(21);
 });
+
+test('createArc works properly', async () => {
+    const nodes: MapNode[] = await MapNode.getNodesObjects('fribourg');
+    nodes.sort((node1, node2) => {
+        if (node1.getNodeID() > node2.getNodeID()) return 1;
+        if (node1.getNodeID() < node2.getNodeID()) return -1;
+        return 0;
+    });
+
+    const arc: MapArc = await MapArc.createArc('fribourg', nodes[3], nodes[1], 5438);
+
+    //query the db for the new arc
+    const arcsFromDB: Record<string, string | number | boolean | Date>[] = await (
+        await DatabaseHandler.getDatabaseHandler()
+    ).querying(`SELECT * FROM fribourg.arcs`);
+
+    //expect row to be in database
+    expect(arcsFromDB).toContainEqual({
+        sourcenodeid: 4,
+        destinationnodeid: 2,
+        distance: 5438,
+    });
+
+    //test if arc object is fine
+    expect(arc.getSourceNode().getNodeID()).toEqual(4);
+    expect(arc.getDestinationNode().getNodeID()).toEqual(2);
+    expect(arc.getDistance()).toEqual(5438);
+});
