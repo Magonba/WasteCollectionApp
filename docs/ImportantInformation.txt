@@ -30,6 +30,10 @@ ESLint, Prettier, Typescript Configuration info:
     https://www.robertcooper.me/using-eslint-and-prettier-in-a-typescript-project
     (possible extensions: automatic fixing when saving, no 'bad' commits)
 
+EACCES error, err -13, follow instructions (not everything precisely, just good as possible, which fixed the problem):
+-https://docs.microsoft.com/en-us/windows/nodejs/setup-on-wsl2
+-https://docs.microsoft.com/en-us/windows/wsl/install-win10
+
 What was done?
 -Linux user "wastecollectiondata" with password "wastecollectiondata" was created
 -PostgreSQL user "wastecollectiondata" with password "wastecollectiondata" was created

@@ -3,6 +3,7 @@ import Router from 'koa-router';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import cors from 'koa2-cors';
+import logger from 'koa-logger';
 import dotenv from 'dotenv';
 dotenv.config({ path: '../../.env' }); // necessary for accessing process.env variable
 
@@ -22,9 +23,7 @@ export class Controller {
             Controller.controller = new Controller(await Model.createModel());
 
             //setup api endpoints
-            Controller.controller.router.get('/', async () => {
-                console.log('API is working');
-            });
+            await Controller.controller.setupEndpoints();
 
             //setup koaApp
             Controller.controller.koaApp
@@ -35,12 +34,19 @@ export class Controller {
                     }),
                 )
                 .use(Controller.controller.router.routes())
-                .use(Controller.controller.router.allowedMethods());
+                .use(Controller.controller.router.allowedMethods())
+                .use(logger());
 
             Controller.controller.koaApp.listen(process.env.API_PORT, async () => {
                 console.log(`Listening on port: ${process.env.API_PORT}`);
             });
         }
         return Controller.controller;
+    }
+
+    private async setupEndpoints() {
+        this.router.get('/', async () => {
+            console.log('API is working');
+        });
     }
 }
